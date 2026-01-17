@@ -27,4 +27,5 @@ class CPU:
     else:
         raise Exception(f"Unknown opcode {hex(opcode)}")
 
+
     
