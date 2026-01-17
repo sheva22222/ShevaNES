@@ -107,7 +107,27 @@ class CPU:
             self.SP = (self.SP + 1) & 0xFF
             self.A = self.memory[0x0100 + self.SP]
             self.Z = 1 if self.A == 0 else 0
-       
+
+        elif opcode == 0x20:  # JSR absolute
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            return_addr = self.PC + 1
+
+            self.memory[0x0100 + self.SP] = (return_addr >> 8) & 0xFF
+            self.SP = (self.SP - 1) & 0xFF
+            self.memory[0x0100 + self.SP] = return_addr & 0xFF
+            self.SP = (self.SP - 1) & 0xFF
+
+            self.PC = (high << 8) | low
+
+        elif opcode == 0x60:  # RTS
+            self.SP = (self.SP + 1) & 0xFF
+            low = self.memory[0x0100 + self.SP]
+            self.SP = (self.SP + 1) & 0xFF
+            high = self.memory[0x0100 + self.SP]
+
+            self.PC = ((high << 8) | low) + 1
+        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
             
