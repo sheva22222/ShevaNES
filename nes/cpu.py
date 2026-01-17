@@ -2,7 +2,7 @@ class CPU:
     def __init__(self):
         self.N = 0  # Negative flag
         self.V = 0  # Overflow flag
-        self.C = 0  # Carry flag
+        cpu.C = 0  # Carry flag
         self.Z = 0  # Zero flag
         self.A = 0
         self.X = 0
