@@ -7,11 +7,15 @@ program = [
     0xF0, 0x02,
     0xA9, 0x01,
     0xA9, 0x05,
+    0x00,        # BRK
 ]
 
 cpu.load_program(program)
 
-for _ in range(4):
-    cpu.step()
+try:
+    while True:
+        cpu.step()
+except StopIteration:
+    pass
 
 print(cpu.A)
