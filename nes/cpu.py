@@ -151,6 +151,11 @@ class CPU:
 
             self.PC = (high << 8) | low
 
+        elif opcode == 0x4C:  # JMP absolute
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            self.PC = (high << 8) | low
+
         elif opcode == 0x60:  # RTS
             self.SP = (self.SP + 1) & 0xFF
             low = self.memory[0x0100 + self.SP]
@@ -199,11 +204,6 @@ class CPU:
                if offset & 0x80:
                    offset -= 0x100
                self.PC += offset
-
-        elif opcode == 0x4C:  # JMP absolute
-            low = self.memory[self.PC]
-            high = self.memory[self.PC + 1]
-            self.PC = (high << 8) | low
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
