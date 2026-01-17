@@ -13,16 +13,18 @@ class CPU:
             self.memory[start + i] = byte
 
     def step(self):
-        opcode = self.memory[self.PC]
-        self.PC += 1
+    opcode = self.memory[self.PC]
+    self.PC += 1
 
-        if opcode == 0xA9:  # LDA immediate
-            value = self.memory[self.PC]
-            self.PC += 1
-            self.A = value
-        else:
-            raise Exception(f"Unknown opcode {hex(opcode)}")
-            
+    if opcode == 0xA9:  # LDA immediate
+        value = self.memory[self.PC]
+        self.PC += 1
+        self.A = value
+
     elif opcode == 0xE8:  # INX
-         self.X = (self.X + 1) & 0xFF
+        self.X = (self.X + 1) & 0xFF
+
+    else:
+        raise Exception(f"Unknown opcode {hex(opcode)}")
+
     
