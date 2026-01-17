@@ -23,3 +23,6 @@ class CPU:
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
             
+        elif opcode == 0xE8:  # INX
+              self.X = (self.X + 1) & 0xFF
+    
