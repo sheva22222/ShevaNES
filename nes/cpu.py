@@ -2,13 +2,15 @@ class CPU:
     def __init__(self):
         self.A = 0
         self.X = 0
-        self.PC = 0
+        self.PC = 0x8000
         self.SP = 0xFD
 
         self.Z = 0
-        self.C = 0   # Carry flag
+        self.C = 0
         self.N = 0
         self.V = 0
+
+        self.memory = [0] * 65536  # ← ВОТ ЭТО ОБЯЗАТЕЛЬНО
 
     def load_program(self, program, start=0x8000):
         self.PC = start
