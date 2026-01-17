@@ -51,7 +51,11 @@ class CPU:
                 if offset & 0x80:
                     offset -= 256
                 self.PC += offset
-
+                
+        elif opcode == 0x00:  # BRK
+            raise StopIteration("BRK")
+    
+        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
             
