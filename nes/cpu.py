@@ -146,11 +146,14 @@ class CPU:
             value = self.memory[self.PC]
             self.PC += 1
 
-            temp = (self.A - value) & 0x1FF
+            result = (self.A - value) & 0xFF
 
-            self.C = 1 if self.A >= value else 0
-            self.Z = 1 if (temp & 0xFF) == 0 else 0
-            self.N = 1 if temp & 0x80 else 0
+            if self.A >= value:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            self.update_zn(result)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
