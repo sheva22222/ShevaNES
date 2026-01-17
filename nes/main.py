@@ -3,14 +3,13 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xE8,
-    0xE8,
-    0xE8,
+    0xA9, 0x2A,  # LDA #42
+    0x85, 0x10,  # STA $10
 ]
 
 cpu.load_program(program)
 
-for _ in range(3):
-    cpu.step()
+cpu.step()
+cpu.step()
 
-print(cpu.X)
+print(cpu.memory[0x10])
