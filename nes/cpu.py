@@ -76,6 +76,18 @@ class CPU:
                 if offset & 0x80:
                     offset -= 0x100
                     self.PC += offset
+
+        elif opcode == 0xA9:  # LDA immediate
+            self.A = self.memory[self.PC]
+            self.PC += 1
+            self.Z = 1 if self.A == 0 else 0
+
+        elif opcode == 0x8D:  # STA absolute
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            addr = (high << 8) | low
+            self.memory[addr] = self.A
+            self.PC += 2
        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
