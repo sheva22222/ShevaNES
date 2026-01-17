@@ -3,10 +3,11 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xA9, 42,   # LDA #42
-    0x48,       # PHA
-    0xA9, 0,    # LDA #0
-    0x68        # PLA
+    0x20, 0x05, 0x80,  # JSR $8005
+    0xA9, 1,          # LDA #1
+    0x00,             # BRK
+    0xA9, 42,         # sub: LDA #42
+    0x60              # RTS
 ]
 
 cpu.load_program(program)
