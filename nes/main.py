@@ -3,11 +3,8 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0x20, 0x05, 0x80,  # JSR $8005
-    0xA9, 1,          # LDA #1
-    0x00,             # BRK
-    0xA9, 42,         # sub: LDA #42
-    0x60              # RTS
+    0xA9, 0x50,   # LDA #80
+    0x69, 0x50    # ADC #80  → 160 (переполнение знака)
 ]
 
 cpu.load_program(program)
@@ -18,4 +15,6 @@ try:
 except StopIteration:
     pass
 
-print(cpu.A)
+print(hex(cpu.A))
+print(cpu.V)
+print(cpu.N)
