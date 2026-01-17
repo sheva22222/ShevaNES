@@ -10,7 +10,7 @@ program = [
 cpu.load_program(program)
 
 try:
-    for _ in range(10):
+    for _ in range(5):
     cpu.step()
 
 print(cpu.X)
