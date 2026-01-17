@@ -1,5 +1,7 @@
 class CPU:
     def __init__(self):
+        self.N = 0  # Negative flag
+        self.V = 0  # Overflow flag
         self.C = 0  # Carry flag
         self.Z = 0  # Zero flag
         self.A = 0
@@ -96,8 +98,14 @@ class CPU:
 
             result = self.A + value + self.C
             self.C = 1 if result > 0xFF else 0
-            self.A = result & 0xFF
+
+            result8 = result & 0xFF
+
+            self.V = 1 if (~(self.A ^ value) & (self.A ^ result8) & 0x80) else 0
+            self.A = result8
+
             self.Z = 1 if self.A == 0 else 0
+            self.N = 1 if self.A & 0x80 else 0
 
         elif opcode == 0x48:  # PHA
             self.memory[0x0100 + self.SP] = self.A
