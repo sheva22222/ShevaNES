@@ -1,5 +1,6 @@
 class CPU:
     def __init__(self):
+        self.C = 0  # Carry flag
         self.Z = 0  # Zero flag
         self.A = 0
         self.X = 0
@@ -88,6 +89,15 @@ class CPU:
             addr = (high << 8) | low
             self.memory[addr] = self.A
             self.PC += 2
+
+        elif opcode == 0x69:  # ADC immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+
+            result = self.A + value + self.C
+            self.C = 1 if result > 0xFF else 0
+            self.A = result & 0xFF
+            self.Z = 1 if self.A == 0 else 0
        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
