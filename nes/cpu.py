@@ -133,6 +133,20 @@ class CPU:
             high = self.memory[self.PC + 1]
             self.PC = (high << 8) | low
 
+        elif opcode == 0x6C:  # JMP indirect (with 6502 bug)
+            ptr_low = self.memory[self.PC]
+            ptr_high = self.memory[self.PC + 1]
+            ptr = (ptr_high << 8) | ptr_low
+
+            # 6502 page boundary bug
+            low = self.memory[ptr]
+            if (ptr & 0x00FF) == 0x00FF:
+                high = self.memory[ptr & 0xFF00]
+            else:
+                high = self.memory[ptr + 1]
+
+            self.PC = (high << 8) | low
+
         elif opcode == 0x60:  # RTS
             self.SP = (self.SP + 1) & 0xFF
             low = self.memory[0x0100 + self.SP]
