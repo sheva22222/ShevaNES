@@ -3,19 +3,17 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xA9, 0x00,
-    0xF0, 0x02,
-    0xA9, 0x01,
-    0xA9, 0x05,
-    0x00,        # BRK
+    0xE8,            # INX
+    0x4C, 0x00, 0x80 # JMP $8000
 ]
 
 cpu.load_program(program)
 
 try:
-    while True:
+    for _ in range(5):
         cpu.step()
 except StopIteration:
     pass
 
-print(cpu.A)
+print(cpu.X)
+
