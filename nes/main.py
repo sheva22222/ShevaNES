@@ -3,13 +3,17 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xE8,
-    0x4C, 0x00, 0x80
+    0xA2, 0x05,      # LDX #5
+    0xCA,            # DEX
+    0xD0, 0xFD       # BNE назад на DEX
 ]
 
 cpu.load_program(program)
 
-for _ in range(5):
-    cpu.step()
+try:
+    while True:
+        cpu.step()
+except StopIteration:
+    pass
 
 print(cpu.X)
