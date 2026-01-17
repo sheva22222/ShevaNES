@@ -10,10 +10,8 @@ program = [
 cpu.load_program(program)
 
 try:
-    for _ in range(5):
-        cpu.step()
-except StopIteration:
-    pass
+    for _ in range(10):
+    cpu.step()
 
 print(cpu.X)
 
