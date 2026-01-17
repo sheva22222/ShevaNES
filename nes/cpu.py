@@ -1,16 +1,15 @@
 class CPU:
     def __init__(self):
-        self.N = 0  # Negative flag
-        self.V = 0  # Overflow flag
-        cpu.C = 0  # Carry flag
-        self.Z = 0  # Zero flag
         self.A = 0
         self.X = 0
-        self.Y = 0
-        self.PC = 0x0000
+        self.PC = 0
         self.SP = 0xFD
-        self.P = 0b00100000
-        self.memory = [0] * 65536
+
+        self.Z = 0
+        self.C = 0   # Carry flag
+        self.N = 0
+        self.V = 0
+
 
     def load_program(self, program, start=0x8000):
         self.PC = start
