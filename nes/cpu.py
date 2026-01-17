@@ -24,5 +24,10 @@ class CPU:
         elif opcode == 0xE8:  # INX
             self.X = (self.X + 1) & 0xFF
 
+        elif opcode == 0x85:  # STA zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.memory[addr] = self.A
+
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
