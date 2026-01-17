@@ -13,9 +13,9 @@ class CPU:
         self.memory = [0] * 65536  # ← ВОТ ЭТО ОБЯЗАТЕЛЬНО
 
     def load_program(self, program, start=0x8000):
-    for i, byte in enumerate(program):
-        self.memory[start + i] = byte
-    self.PC = start
+        for i, byte in enumerate(program):
+            self.memory[start + i] = byte
+        self.PC = start
 
     def update_zn(self, value):
         if value == 0:
