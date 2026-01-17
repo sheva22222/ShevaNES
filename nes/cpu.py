@@ -98,6 +98,15 @@ class CPU:
             self.C = 1 if result > 0xFF else 0
             self.A = result & 0xFF
             self.Z = 1 if self.A == 0 else 0
+
+        elif opcode == 0x48:  # PHA
+            self.memory[0x0100 + self.SP] = self.A
+            self.SP = (self.SP - 1) & 0xFF
+
+        elif opcode == 0x68:  # PLA
+            self.SP = (self.SP + 1) & 0xFF
+            self.A = self.memory[0x0100 + self.SP]
+            self.Z = 1 if self.A == 0 else 0
        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
