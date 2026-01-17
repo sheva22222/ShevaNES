@@ -52,11 +52,20 @@ class CPU:
             offset = self.memory[self.PC]
             self.PC += 1
 
-            if self.P & 0b00000010:
+            if (self.P >> 1) & 1:  # Z flag
                 if offset & 0x80:
-                    offset -= 256
+                    offset -= 0x100
                 self.PC += offset
-                
+
+        elif opcode == 0xD0:  # BNE
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+            if ((self.P >> 1) & 1) == 0:  # Z == 0
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
+
         elif opcode == 0x00:  # BRK
             raise StopIteration("BRK")
     
