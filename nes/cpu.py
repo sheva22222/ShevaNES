@@ -10,7 +10,6 @@ class CPU:
         self.N = 0
         self.V = 0
 
-
     def load_program(self, program, start=0x8000):
         self.PC = start
         for i, byte in enumerate(program):
