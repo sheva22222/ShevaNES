@@ -181,6 +181,15 @@ class CPU:
                 if offset & 0x80:
                     offset -= 0x100
                 self.PC += offset
+
+        elif opcode == 0x30:  # BMI
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+            if self.P & 0b10000000:  # N == 1
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
