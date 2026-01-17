@@ -66,6 +66,16 @@ class CPU:
                     offset -= 0x100
                 self.PC += offset
 
+        elif opcode == 0xB0:  # BCS
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+            if self.P & 1:  # C == 1
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
+        
+
         elif opcode == 0x00:  # BRK
             raise StopIteration("BRK")
     
