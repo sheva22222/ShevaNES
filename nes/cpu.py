@@ -74,7 +74,6 @@ class CPU:
                 if offset & 0x80:
                     offset -= 0x100
                 self.PC += offset
-        
 
         elif opcode == 0x00:  # BRK
             raise StopIteration("BRK")
