@@ -51,6 +51,14 @@ class CPU:
             self.X = (self.X + 1) & 0xFF
             self.update_zn(self.X)
 
+        elif opcode == 0xF0:  # BEQ
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+        if self.P & 0b00000010:  # Z = 1
+          if offset & 0x80:
+             offset -= 256
+             self.PC += offset
 
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
