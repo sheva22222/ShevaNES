@@ -3,12 +3,12 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xA9, 0xFF,  # LDA #$FF
-    0x30, 0x02,  # BMI +2
-    0xA9, 0x01,  # LDA #$01
-    0xA9, 0x05,  # LDA #$05
-    0x00         # BRK
+    0xA9, 0x01,       # LDA #$01 → N = 0
+    0x10, 0x02,       # BPL +2 (сработает)
+    0xA9, 0xFF,       # LDA #$FF (пропуск)
+    0xA9, 0x05        # LDA #$05
 ]
+
 
 cpu.load_program(program)
 
