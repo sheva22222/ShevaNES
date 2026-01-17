@@ -111,10 +111,14 @@ class CPU:
         elif opcode == 0x20:  # JSR absolute
             low = self.memory[self.PC]
             high = self.memory[self.PC + 1]
-            return_addr = self.PC + 1
 
+            return_addr = self.PC + 1  # КРИТИЧНО
+
+            # push high
             self.memory[0x0100 + self.SP] = (return_addr >> 8) & 0xFF
             self.SP = (self.SP - 1) & 0xFF
+
+            # push low
             self.memory[0x0100 + self.SP] = return_addr & 0xFF
             self.SP = (self.SP - 1) & 0xFF
 
