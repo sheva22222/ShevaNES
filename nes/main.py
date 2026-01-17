@@ -3,9 +3,9 @@ from cpu import CPU
 cpu = CPU()
 
 program = [
-    0xE8,  # INX
-    0xE8,  # INX
-    0xE8,  # INX
+    0xE8,
+    0xE8,
+    0xE8,
 ]
 
 cpu.load_program(program)
@@ -13,4 +13,4 @@ cpu.load_program(program)
 for _ in range(3):
     cpu.step()
 
-print(cpu.X)  # должно быть 3
+print(cpu.X)
