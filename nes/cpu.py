@@ -127,10 +127,12 @@ class CPU:
         elif opcode == 0x60:  # RTS
             self.SP = (self.SP + 1) & 0xFF
             low = self.memory[0x0100 + self.SP]
+
             self.SP = (self.SP + 1) & 0xFF
             high = self.memory[0x0100 + self.SP]
 
             self.PC = ((high << 8) | low) + 1
+
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
