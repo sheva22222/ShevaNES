@@ -141,6 +141,15 @@ class CPU:
 
             self.PC = ((high << 8) | low) + 1
 
+        elif opcode == 0xC9:  # CMP immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+
+            temp = (self.A - value) & 0x1FF
+
+            self.C = 1 if self.A >= value else 0
+            self.Z = 1 if (temp & 0xFF) == 0 else 0
+            self.N = 1 if temp & 0x80 else 0
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
