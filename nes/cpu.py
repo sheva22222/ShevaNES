@@ -182,7 +182,6 @@ class CPU:
                     offset -= 0x100
                 self.PC += offset
         
-        
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
             
