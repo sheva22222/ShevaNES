@@ -1,5 +1,6 @@
 class CPU:
     def __init__(self):
+        self.Z = 0  # Zero flag
         self.A = 0
         self.X = 0
         self.Y = 0
@@ -59,7 +60,23 @@ class CPU:
             low = self.memory[self.PC]
             high = self.memory[self.PC + 1]
             self.PC = (high << 8) | low
-    
+
+        elif opcode == 0xA2:  # LDX immediate
+            self.X = self.memory[self.PC]
+            self.PC += 1
+
+        elif opcode == 0xCA:  # DEX
+            self.X = (self.X - 1) & 0xFF
+            self.Z = 1 if self.X == 0 else 0
+
+        elif opcode == 0xD0:  # BNE
+            offset = self.memory[self.PC]
+            self.PC += 1
+            if self.Z == 0:
+                if offset & 0x80:
+                    offset -= 0x100
+                    self.PC += offset
+       
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
             
