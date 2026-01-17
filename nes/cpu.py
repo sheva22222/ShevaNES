@@ -17,23 +17,41 @@ class CPU:
         if value == 0:
             self.P |= 0b00000010
         else:
-    elif opcode == 0xE8:  # INX
-        self.X = (self.X + 1) & 0xFF
-        self.update_zn(self.X)
+            self.P &= 0b11111101
 
-    elif opcode == 0x85:  # STA zeropage
-        addr = self.memory[self.PC]
-        self.PC += 1
-        self.memory[addr] = self.A
+        if value & 0x80:
+            self.P |= 0b10000000
+        else:
+            self.P &= 0b01111111
 
-    elif opcode == 0xF0:  # BEQ
-        offset = self.memory[self.PC]
+    def step(self):
+        opcode = self.memory[self.PC]
         self.PC += 1
 
-        if self.P & 0b00000010:  # Z = 1
-            if offset & 0x80:
-                offset -= 256
-            self.PC += offset
+        if opcode == 0xA9:  # LDA immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.A = value
+            self.update_zn(self.A)
 
-    else:
-        raise Exception(f"Unknown opcode {hex(opcode)}")
+        elif opcode == 0xE8:  # INX
+            self.X = (self.X + 1) & 0xFF
+            self.update_zn(self.X)
+
+        elif opcode == 0x85:  # STA zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.memory[addr] = self.A
+
+        elif opcode == 0xF0:  # BEQ
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+            if self.P & 0b00000010:
+                if offset & 0x80:
+                    offset -= 256
+                self.PC += offset
+
+        else:
+            raise Exception(f"Unknown opcode {hex(opcode)}")
+            
