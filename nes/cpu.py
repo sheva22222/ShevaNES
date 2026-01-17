@@ -1,9 +1,9 @@
 class CPU:
     def __init__(self):
-        self.A = 0      # аккумулятор
+        self.A = 0
         self.X = 0
         self.Y = 0
-        self.PC = 0x0000  # program counter
+        self.PC = 0x0000
         self.SP = 0xFD
         self.memory = [0] * 65536
 
@@ -13,19 +13,16 @@ class CPU:
             self.memory[start + i] = byte
 
     def step(self):
-    opcode = self.memory[self.PC]
-    self.PC += 1
-
-    if opcode == 0xA9:  # LDA immediate
-        value = self.memory[self.PC]
+        opcode = self.memory[self.PC]
         self.PC += 1
-        self.A = value
 
-    elif opcode == 0xE8:  # INX
-        self.X = (self.X + 1) & 0xFF
+        if opcode == 0xA9:  # LDA immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.A = value
 
-    else:
-        raise Exception(f"Unknown opcode {hex(opcode)}")
+        elif opcode == 0xE8:  # INX
+            self.X = (self.X + 1) & 0xFF
 
-
-    
+        else:
+            raise Exception(f"Unknown opcode {hex(opcode)}")
