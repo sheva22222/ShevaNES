@@ -1,4 +1,5 @@
 why is created?
+Creating emulator using vibecoding (experimental, dont use never it)
 1:Сделана минимальная эмуляция CPU ✅
 
 2:Сделана эмуляция инструкций INX ✅
