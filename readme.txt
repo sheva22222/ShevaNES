@@ -48,3 +48,13 @@ Creating emulator using vibecoding (experimental, dont use never it)
 
 24: Эмуляция RTI✅
 25:Эмуляция инструкции NOP✅
+
+26:Эмуляция инструкций CLC, SEC, CLI, SEI, CLV✅
+
+27: Полноценная эмуляция BRK✅
+
+28: Эмуляция NMI✅
+
+29:Эмуляция PLP✅
+
+30:Эмуляция SBC✅
