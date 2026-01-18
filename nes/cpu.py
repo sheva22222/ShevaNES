@@ -336,7 +336,6 @@ class CPU:
             p = (self.P & 0b11101111) | 0b00110000
             self.memory[0x0100 + self.SP] = p
             self.SP = (self.SP - 1) & 0xFF
-            raise StopIteration("BRK")
 
         elif opcode == 0xE9:  # SBC immediate
             value = self.memory[self.PC]
