@@ -2,19 +2,24 @@ from cpu import CPU
 
 cpu = CPU()
 
-# --- мини тест JMP (indirect) ---
-cpu.memory[0x3000] = 0x6C      # opcode JMP ($12FF)
-cpu.memory[0x3001] = 0xFF
-cpu.memory[0x3002] = 0x12
+program = [
+    0xA9, 0x42,  # LDA #$42
+    0x00         # BRK
+]
 
-cpu.memory[0x12FF] = 0x34
-cpu.memory[0x1200] = 0x56      # 6502 bug
+cpu.load_program(program, 0x8000)
 
-cpu.PC = 0x3000
+# reset vector → $8000
+cpu.memory[0xFFFC] = 0x00
+cpu.memory[0xFFFD] = 0x80
+
+cpu.reset()
 
 try:
-    cpu.step()
+    while True:
+        cpu.step()
 except StopIteration:
     pass
 
-print("PC =", hex(cpu.PC))     # ОЖИДАЕМО: 0x5634
+print(hex(cpu.A))   # должно быть 0x42
+print("PC =", hex(cpu.PC))
