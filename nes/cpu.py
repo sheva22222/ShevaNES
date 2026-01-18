@@ -333,7 +333,7 @@ class CPU:
             self.P &= 0b10111111
 
         elif opcode == 0x08:  # PHP
-            p = self.P | 0b00110000  # U = 1, B = 1
+            p = (self.P & 0b11101111) | 0b00110000
             self.memory[0x0100 + self.SP] = p
             self.SP = (self.SP - 1) & 0xFF
             raise StopIteration("BRK")
