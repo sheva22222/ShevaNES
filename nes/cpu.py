@@ -239,6 +239,21 @@ class CPU:
                 if offset & 0x80:
                     offset -= 0x100
                 self.PC += offset
+
+        elif opcode == 0x40:  # RTI
+        # pull P
+        self.SP = (self.SP + 1) & 0xFF
+        self.P = self.memory[0x0100 + self.SP]
+
+        # pull PC low
+        self.SP = (self.SP + 1) & 0xFF
+        low = self.memory[0x0100 + self.SP]
+
+        # pull PC high
+        self.SP = (self.SP + 1) & 0xFF
+        high = self.memory[0x0100 + self.SP]
+
+        self.PC = (high << 8) | low
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
