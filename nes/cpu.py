@@ -67,6 +67,30 @@ class CPU:
         low = self.memory[0xFFFE]
         high = self.memory[0xFFFF]
         self.PC = (high << 8) | low
+
+    def nmi(self):
+        # push PC high
+        self.memory[0x0100 + self.SP] = (self.PC >> 8) & 0xFF
+        self.SP = (self.SP - 1) & 0xFF
+
+        # push PC low
+        self.memory[0x0100 + self.SP] = self.PC & 0xFF
+        self.SP = (self.SP - 1) & 0xFF
+
+        # push P (B = 0, U = 1)
+        p = self.P & 0b11101111   # B = 0
+        p |= 0b00100000          # U = 1
+
+        self.memory[0x0100 + self.SP] = p
+        self.SP = (self.SP - 1) & 0xFF
+
+        # I = 1
+        self.P |= 0b00000100
+
+        # load NMI vector
+        low = self.memory[0xFFFA]
+        high = self.memory[0xFFFB]
+        self.PC = (high << 8) | low
         
     def step(self):
         opcode = self.memory[self.PC]
