@@ -3,7 +3,6 @@ class CPU:
         self.P = 0b00100000  # флаг U всегда = 1
         self.A = 0
         self.X = 0
-        self.PC = 0x8000
         self.SP = 0xFD
 
         self.memory = [0] * 65536  # ← ВОТ ЭТО ОБЯЗАТЕЛЬНО
