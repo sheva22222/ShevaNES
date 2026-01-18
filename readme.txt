@@ -39,3 +39,12 @@ Creating emulator using vibecoding (experimental, dont use never it)
 19:Эмуляция BPL✅
 
 20:2/3 Эмуляции JMP✅
+
+21:3/3 Исправить 6502 баг✅
+
+22:Reset vector для CPU✅
+
+23: Эмуляция IRQ✅
+
+24: Эмуляция RTI✅
+25:Эмуляция инструкции NOP✅
