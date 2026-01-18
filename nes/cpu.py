@@ -191,9 +191,9 @@ class CPU:
             self.PC += 1
 
             if not (self.P & 0b10000000):  # N == 0
-               if offset & 0x80:
-                   offset -= 0x100
-               self.PC += offset
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
 
     def reset(self):
         low = self.memory[0xFFFC]
