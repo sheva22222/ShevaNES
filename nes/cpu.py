@@ -194,6 +194,14 @@ class CPU:
                if offset & 0x80:
                    offset -= 0x100
                self.PC += offset
+
+    def reset(self):
+        low = self.memory[0xFFFC]
+        high = self.memory[0xFFFD]
+        self.PC = (high << 8) | low
+
+        self.SP = 0xFD
+        self.P = 0b00100000
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
