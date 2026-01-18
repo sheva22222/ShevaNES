@@ -4,7 +4,7 @@ def run(program):
     cpu = CPU()
     cpu.load_program(program)
 
-    # reset vector → 0x8000
+    # reset vector
     cpu.memory[0xFFFC] = 0x00
     cpu.memory[0xFFFD] = 0x80
     cpu.reset()
@@ -19,10 +19,10 @@ def run(program):
 
 
 cpu = run([
-    0x18,  # CLC
+    0x58,  # CLI
     0x00   # BRK
 ])
 
-print("C =", cpu.P & 1)
+print("I =", (cpu.P >> 2) & 1)
 print("P =", bin(cpu.P))
 print("PC =", hex(cpu.PC))
