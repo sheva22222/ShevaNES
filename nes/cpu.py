@@ -343,26 +343,24 @@ class CPU:
             self.PC += 1
 
             carry = self.P & 1
-            value ^= 0xFF  # ~M
+            result = self.A - value - (1 - carry)
 
-            result = self.A + value + carry
-
-            # Carry (нет заёма)
-            if result > 0xFF:
+            # C flag (no borrow)
+            if result >= 0:
                 self.P |= 0b00000001
             else:
                 self.P &= 0b11111110
 
-           result8 = result & 0xFF
+            result8 = result & 0xFF
 
-           # Overflow
-           if ((self.A ^ result8) & (value ^ result8) & 0x80):
-               self.P |= 0b01000000
-           else:
-               self.P &= 0b10111111
+            # V flag
+            if ((self.A ^ result8) & (self.A ^ value) & 0x80):
+                self.P |= 0b01000000
+            else:
+                self.P &= 0b10111111
 
-           self.A = result8
-           self.update_zn(self.A)
+            self.A = result8
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
