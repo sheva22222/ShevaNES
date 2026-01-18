@@ -240,8 +240,7 @@ class CPU:
                     offset -= 0x100
                 self.PC += offset
 
-        elif opcode == 0x40:  # RTI
-            # pull P
+        elif opcode == 0x40:  # RTI чат гпт гамно мале поставило после этой строчки комент
             self.SP = (self.SP + 1) & 0xFF
             self.P = self.memory[0x0100 + self.SP]
 
