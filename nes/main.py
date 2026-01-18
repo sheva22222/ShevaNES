@@ -19,7 +19,7 @@ def run(program):
 
 
 cpu = run([
-    0x58,  # CLI
+    0x78,  # SEI
     0x00   # BRK
 ])
 
