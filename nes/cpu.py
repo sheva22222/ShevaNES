@@ -329,6 +329,11 @@ class CPU:
 
         elif opcode == 0xB8:  # CLV
             self.P &= 0b10111111
+
+        elif opcode == 0x08:  # PHP
+            p = self.P | 0b00110000  # U = 1, B = 1
+            self.memory[0x0100 + self.SP] = p
+            self.SP = (self.SP - 1) & 0xFF
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
