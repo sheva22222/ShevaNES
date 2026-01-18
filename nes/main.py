@@ -2,15 +2,19 @@ from cpu import CPU
 
 cpu = CPU()
 
-cpu.P = 0b10000000  # N = 1
-cpu.SP = 0xFD
+# Программа:
+# SEC
+# LDA #$05
+# SBC #$03
+# BRK
+cpu.memory[0x8000] = 0x38  # SEC
+cpu.memory[0x8001] = 0xA9  # LDA #
+cpu.memory[0x8002] = 0x05
+cpu.memory[0x8003] = 0xE9  # SBC #
+cpu.memory[0x8004] = 0x03
+cpu.memory[0x8005] = 0x00  # BRK
 
-cpu.memory[0x8000] = 0x08  # PHP
-cpu.memory[0x8001] = 0x00  # BRK
 cpu.PC = 0x8000
-
-print("SP before =", hex(cpu.SP))
-print("P before  =", bin(cpu.P))
 
 try:
     while True:
@@ -18,6 +22,8 @@ try:
 except StopIteration:
     pass
 
-print("SP after  =", hex(cpu.SP))
-print("Stack P  =", bin(cpu.memory[0x0100 + cpu.SP + 1]))
-print("P after  =", bin(cpu.P))
+print("A =", hex(cpu.A))
+print("C =", cpu.P & 1)
+print("Z =", (cpu.P >> 1) & 1)
+print("N =", (cpu.P >> 7) & 1)
+print("V =", (cpu.P >> 6) & 1)
