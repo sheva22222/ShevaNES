@@ -40,6 +40,34 @@ class CPU:
             self.P &= 0b11111011
             self.I = 0
 
+    def irq(self):
+        # если I = 1, IRQ игнорируется
+        if self.P & 0b00000100:
+            return
+
+        # push PC (high)
+        self.memory[0x0100 + self.SP] = (self.PC >> 8) & 0xFF
+        self.SP = (self.SP - 1) & 0xFF
+
+        # push PC (low)
+        self.memory[0x0100 + self.SP] = self.PC & 0xFF
+        self.SP = (self.SP - 1) & 0xFF
+
+        # push P (B = 0, U = 1)
+        p = self.P & 0b11101111
+        p |= 0b00100000
+
+        self.memory[0x0100 + self.SP] = p
+        self.SP = (self.SP - 1) & 0xFF
+
+        # I = 1
+        self.P |= 0b00000100
+
+        # load IRQ vector
+        low = self.memory[0xFFFE]
+        high = self.memory[0xFFFF]
+        self.PC = (high << 8) | low
+        
     def step(self):
         opcode = self.memory[self.PC]
         self.PC += 1
