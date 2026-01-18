@@ -1,5 +1,6 @@
 class CPU:
     def __init__(self):
+        self.I = 0
         self.P = 0b00100000  # флаг U всегда = 1
         self.A = 0
         self.X = 0
@@ -30,6 +31,14 @@ class CPU:
 
         self.SP = 0xFD
         self.P = 0b00100000
+
+    def set_I(self, value):
+        if value:
+            self.P |= 0b00000100
+            self.I = 1
+        else:
+            self.P &= 0b11111011
+            self.I = 0
 
     def step(self):
         opcode = self.memory[self.PC]
