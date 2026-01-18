@@ -278,6 +278,9 @@ class CPU:
             self.P &= 0b11111011
 
         elif opcode == 0x78:  # SEI
+            self.P |= 0b00000100  # установить I (bit 2)
+
+        elif opcode == 0x78:  # SEI
             self.P |= 0b00000100
 
         elif opcode == 0xB8:  # CLV
