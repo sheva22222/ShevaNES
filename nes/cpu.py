@@ -311,6 +311,7 @@ class CPU:
             high = self.memory[0x0100 + self.SP]
 
             self.PC = (high << 8) | low
+            raise StopIteration("BRK")
 
         elif opcode == 0xEA:  # NOP
             pass
