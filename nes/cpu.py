@@ -323,9 +323,11 @@ class CPU:
 
         elif opcode == 0x58:  # CLI
             self.P &= 0b11111011
+            self.I = 0
 
         elif opcode == 0x78:  # SEI
             self.P |= 0b00000100
+            self.I = 1
 
         elif opcode == 0xB8:  # CLV
             self.P &= 0b10111111
@@ -334,6 +336,7 @@ class CPU:
             p = self.P | 0b00110000  # U = 1, B = 1
             self.memory[0x0100 + self.SP] = p
             self.SP = (self.SP - 1) & 0xFF
+            raise StopIteration("BRK")
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
