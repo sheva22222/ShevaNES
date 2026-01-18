@@ -267,6 +267,21 @@ class CPU:
 
         elif opcode == 0xEA:  # NOP
             pass
+
+        elif opcode == 0x18:  # CLC
+            self.P &= 0b11111110
+
+        elif opcode == 0x38:  # SEC
+            self.P |= 0b00000001
+
+        elif opcode == 0x58:  # CLI
+            self.P &= 0b11111011
+
+        elif opcode == 0x78:  # SEI
+            self.P |= 0b00000100
+
+        elif opcode == 0xB8:  # CLV
+            self.P &= 0b10111111
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
