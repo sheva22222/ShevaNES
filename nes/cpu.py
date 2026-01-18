@@ -1,7 +1,7 @@
 class CPU:
     def __init__(self):
         self.I = 0
-        self.P = 0b00100000  # флаг U всегда = 1
+        self.P = 0b00100100  # флаг U всегда = 1
         self.A = 0
         self.X = 0
         self.SP = 0xFD
