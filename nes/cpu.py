@@ -114,8 +114,31 @@ class CPU:
                     offset -= 0x100
                 self.PC += offset
 
-        elif opcode == 0x00:  # BRK
-            raise StopIteration("BRK")
+        elif opcode == 0x00:  # BRK нилагична так дилать попати
+
+            self.PC += 1
+
+            # push PC high
+            self.memory[0x0100 + self.SP] = (self.PC >> 8) & 0xFF
+            self.SP = (self.SP - 1) & 0xFF
+
+            # push PC low
+            self.memory[0x0100 + self.SP] = self.PC & 0xFF
+            self.SP = (self.SP - 1) & 0xFF
+
+            # push P (B=1, U=1)
+            p = self.P | 0b00010000  # B = 1
+            p |= 0b00100000          # U = 1
+            self.memory[0x0100 + self.SP] = p
+            self.SP = (self.SP - 1) & 0xFF
+
+            # I = 1
+            self.P |= 0b00000100
+
+            # load IRQ/BRK vector
+            low = self.memory[0xFFFE]
+            high = self.memory[0xFFFF]
+            self.PC = (high << 8) | low
 
         elif opcode == 0xA2:  # LDX immediate
             self.X = self.memory[self.PC]
