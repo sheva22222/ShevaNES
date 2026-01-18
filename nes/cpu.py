@@ -361,6 +361,31 @@ class CPU:
 
             self.A = result8
             self.update_zn(self.A)
+
+        elif opcode == 0x24:  # BIT zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            value = self.memory[addr]
+            result = self.A & value
+
+            # Z
+            if result == 0:
+                self.P |= 0b00000010
+            else:
+                self.P &= 0b11111101
+
+            # N (bit 7 of memory)
+            if value & 0x80:
+                self.P |= 0b10000000
+            else:
+                self.P &= 0b01111111
+
+            # V (bit 6 of memory)
+            if value & 0x40:
+                self.P |= 0b01000000
+            else:
+                self.P &= 0b10111111
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
