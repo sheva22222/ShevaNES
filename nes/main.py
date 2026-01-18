@@ -1,20 +1,28 @@
 from cpu import CPU
 
-cpu = CPU()
+def run(program):
+    cpu = CPU()
+    cpu.load_program(program)
 
-# reset vector -> $8000
-cpu.memory[0xFFFC] = 0x00
-cpu.memory[0xFFFD] = 0x80
+    # reset vector → 0x8000
+    cpu.memory[0xFFFC] = 0x00
+    cpu.memory[0xFFFD] = 0x80
+    cpu.reset()
 
-# program
-cpu.memory[0x8000] = 0xEA  # NOP
-cpu.memory[0x8001] = 0xEA  # NOP
-cpu.memory[0x8002] = 0x00  # BRK
+    try:
+        while True:
+            cpu.step()
+    except StopIteration:
+        pass
 
-cpu.reset()
+    return cpu
 
-try:
-    while True:
-        cpu.step()
-except StopIteration:
-    print("OK, NOP works")
+
+cpu = run([
+    0x18,  # CLC
+    0x00   # BRK
+])
+
+print("C =", cpu.P & 1)
+print("P =", bin(cpu.P))
+print("PC =", hex(cpu.PC))
