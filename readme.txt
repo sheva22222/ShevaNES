@@ -27,3 +27,15 @@ Creating emulator using vibecoding (experimental, dont use never it)
 13: Эмуляция CMP✅
 
 14: Полная реализация BEQ✅
+
+15: Эмуляция BNE✅
+
+16:Эмуляция BCS✅
+
+17:Эмуляция BCC✅
+
+18:Эмуляция BMI✅
+
+19:Эмуляция BPL✅
+
+20:2/3 Эмуляции JMP✅
