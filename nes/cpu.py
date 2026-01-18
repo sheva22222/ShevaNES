@@ -123,7 +123,7 @@ class CPU:
 
         elif opcode == 0xCA:  # DEX
             self.X = (self.X - 1) & 0xFF
-            self.Z = 1 if self.X == 0 else 0
+            self.update_zn(self.X)
 
         elif opcode == 0x8D:  # STA absolute
             low = self.memory[self.PC]
@@ -136,16 +136,25 @@ class CPU:
             value = self.memory[self.PC]
             self.PC += 1
 
-            result = self.A + value + self.C
-            self.C = 1 if result > 0xFF else 0
+            carry = self.P & 1
+            result = self.A + value + carry
+
+            # C
+            if result > 0xFF:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
 
             result8 = result & 0xFF
 
-            self.V = 1 if (~(self.A ^ value) & (self.A ^ result8) & 0x80) else 0
-            self.A = result8
+            # V
+            if (~(self.A ^ value) & (self.A ^ result8) & 0x80):
+                self.P |= 0b01000000
+            else:
+                self.P &= 0b10111111
 
-            self.Z = 1 if self.A == 0 else 0
-            self.N = 1 if self.A & 0x80 else 0
+            self.A = result8
+            self.update_zn(self.A)
 
         elif opcode == 0x48:  # PHA
             self.memory[0x0100 + self.SP] = self.A
@@ -154,13 +163,13 @@ class CPU:
         elif opcode == 0x68:  # PLA
             self.SP = (self.SP + 1) & 0xFF
             self.A = self.memory[0x0100 + self.SP]
-            self.Z = 1 if self.A == 0 else 0
+            self.update_zn(self.A)
 
         elif opcode == 0x20:  # JSR absolute
             low = self.memory[self.PC]
             high = self.memory[self.PC + 1]
 
-            return_addr = self.PC + 1  # КРИТИЧНО
+            return_addr = self.PC - 1  # КРИТИЧНО
 
             # push high
             self.memory[0x0100 + self.SP] = (return_addr >> 8) & 0xFF
@@ -243,6 +252,8 @@ class CPU:
         elif opcode == 0x40:  # RTI чат гпт гамно мале поставило после этой строчки комент
             self.SP = (self.SP + 1) & 0xFF
             self.P = self.memory[0x0100 + self.SP]
+            self.P &= 0b11101111  # B = 0
+            self.P |= 0b00100000  # U = 1
 
             # pull PC low
             self.SP = (self.SP + 1) & 0xFF
