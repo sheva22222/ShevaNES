@@ -2,19 +2,21 @@ from cpu import CPU
 
 cpu = CPU()
 
-# CLC
-# LDA #$03
-# SBC #$05
-cpu.memory[0x8000] = 0x18
-cpu.memory[0x8001] = 0xA9
-cpu.memory[0x8002] = 0x03
-cpu.memory[0x8003] = 0xE9
-cpu.memory[0x8004] = 0x05
+cpu.A = 0b00000001
+cpu.memory[0x0010] = 0b11000000  # N=1, V=1, A&M = 0
 
+cpu.memory[0x8000] = 0x24  # BIT zeropage
+cpu.memory[0x8001] = 0x10
+cpu.memory[0x8002] = 0x00  # BRK
 cpu.PC = 0x8000
 
-for _ in range(3):
-    cpu.step()
+try:
+    while True:
+        cpu.step()
+except StopIteration:
+    pass
 
-print("A =", hex(cpu.A))
-print("P =", bin(cpu.P))
+print("A =", bin(cpu.A))
+print("Z =", (cpu.P >> 1) & 1)
+print("N =", (cpu.P >> 7) & 1)
+print("V =", (cpu.P >> 6) & 1)
