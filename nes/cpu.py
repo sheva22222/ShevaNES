@@ -1,5 +1,6 @@
 class CPU:
     def __init__(self):
+        self.Y = 0
         self.I = 0
         self.P = 0b00100100  # флаг U всегда = 1
         self.A = 0
@@ -30,7 +31,7 @@ class CPU:
         self.PC = (high << 8) | low
 
         self.SP = 0xFD
-        self.P = 0b00100000
+        self.P = 0b00100100
 
     def set_I(self, value):
         if value:
@@ -93,8 +94,9 @@ class CPU:
         self.PC = (high << 8) | low
 
     def INC(self, addr):
-       value = (self.read(addr) + 1) & 0xFF
-       self.write(addr, value)
+        value = (self.memory[addr] + 1) & 0xFF
+        self.memory[addr] = value
+        self.update_zn(value)
 
        self.set_flag_Z(value)
        self.set_flag_N(value)
