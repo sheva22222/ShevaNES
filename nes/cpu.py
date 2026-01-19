@@ -616,6 +616,9 @@ class CPU:
             addr = (high << 8) | low
             self.A = self.A & self.memory[addr]
             self.update_zn(self.A)
+
+        elif opcode == 0xDB:  #чат попати дурак
+            pass
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
