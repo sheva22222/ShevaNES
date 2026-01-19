@@ -167,6 +167,11 @@ class CPU:
             self.PC += 1
             self.memory[addr] = self.A
 
+        elif opcode == 0x86:  # STX zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.memory[addr] = self.X
+
         elif opcode == 0xF0:  # BEQ
             offset = self.memory[self.PC]
             self.PC += 1
