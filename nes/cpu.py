@@ -504,6 +504,38 @@ class CPU:
             self.memory[addr] = value
 
             self.update_zn(value)
+
+        elif opcode == 0xD6:  # DEC zeropage,X
+            addr = (self.memory[self.PC] + self.X) & 0xFF
+            self.PC += 1
+
+            value = (self.memory[addr] - 1) & 0xFF
+            self.memory[addr] = value
+
+            self.update_zn(value)
+
+        elif opcode == 0xCE:  # DEC absolute
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            addr = (high << 8) | low
+            self.PC += 2
+
+            value = (self.memory[addr] - 1) & 0xFF
+            self.memory[addr] = value
+
+            self.update_zn(value)
+
+        elif opcode == 0xDE:  # DEC absolute,X
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            addr = ((high << 8) | low) + self.X
+            addr &= 0xFFFF
+            self.PC += 2
+
+            value = (self.memory[addr] - 1) & 0xFF
+            self.memory[addr] = value
+
+            self.update_zn(value)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
