@@ -146,6 +146,17 @@ class CPU:
         else:
             high = self.memory[ptr + 1]
         return (high << 8) | low
+
+    def set_ZN(self, value):
+        if value == 0:
+            self.P |= 0b00000010
+        else:
+            self.P &= ~0b00000010
+
+        if value & 0x80:
+            self.P |= 0b10000000
+        else:
+            self.P &= ~0b10000000
         
     def step(self):
         opcode = self.memory[self.PC]
@@ -635,6 +646,12 @@ class CPU:
 
         elif opcode == 0xD8:  # CLD
             self.P &= ~0b00001000
+
+        elif opcode == 0xA0:  # LDY #imm
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.Y = value
+            self.set_ZN(self.Y)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
