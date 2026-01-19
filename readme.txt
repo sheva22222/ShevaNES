@@ -58,3 +58,23 @@ Creating emulator using vibecoding (experimental, dont use never it)
 29:Эмуляция PLP✅
 
 30:Эмуляция SBC✅
+
+31:Эмуляция BIT✅
+
+32:Эмуляция AND✅
+
+33:Эмуляция ASL✅
+
+34:Эмуляция LSR✅
+
+35:Эмуляция ROL✅
+
+36:Эмуляция INC✅
+
+37:Эмуляция DEC✅
+
+38:Эмуляция адресаций✅
+
+39:STX для nestest.nes✅
+
+40:BVS/BVC для nestest.nes✅
