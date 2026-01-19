@@ -435,6 +435,18 @@ class CPU:
 
             self.A = (self.A >> 1) & 0xFF
             self.update_zn(self.A)    
+
+        elif opcode == 0x2A:  # ROL A
+            old_c = self.P & 1
+            new_c = (self.A >> 7) & 1
+
+            if new_c:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            self.A = ((self.A << 1) & 0xFF) | old_c
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
