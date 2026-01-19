@@ -1,19 +1,19 @@
 from cpu import CPU
 
 cpu = CPU()
-cpu.memory[0x0010] = 0x01
 
-cpu.memory[0x8000] = 0xC6  # DEC zp
-cpu.memory[0x8001] = 0x10
-cpu.memory[0x8002] = 0x00  # BRK
-cpu.PC = 0x8000
+with open("nestest.nes", "rb") as f:
+    rom = f.read()
 
-try:
-    while True:
-        cpu.step()
-except StopIteration:
-    pass
+prg = rom[16:16+0x4000]
 
-print(hex(cpu.memory[0x0010]))  # 0x0
-print("Z =", (cpu.P >> 1) & 1)  # 1
-print("N =", (cpu.P >> 7) & 1)  # 0
+for i in range(0x4000):
+    cpu.memory[0x8000 + i] = prg[i]
+    cpu.memory[0xC000 + i] = prg[i]
+
+cpu.PC = 0xC000
+cpu.SP = 0xFD
+cpu.P  = 0x24
+
+while True:
+    cpu.step()
