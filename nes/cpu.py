@@ -98,6 +98,55 @@ class CPU:
 
        self.set_flag_Z(value)
        self.set_flag_N(value)
+
+    def fetch_byte(self):
+        value = self.memory[self.PC]
+        self.PC = (self.PC + 1) & 0xFFFF
+        return value
+
+    def fetch_word(self):
+        low = self.fetch_byte()
+        high = self.fetch_byte()
+        return (high << 8) | low
+
+    def addr_zeropage(self):
+        return self.fetch_byte()
+
+    def addr_zeropage_x(self):
+        return (self.fetch_byte() + self.X) & 0xFF
+
+    def addr_zeropage_y(self):
+        return (self.fetch_byte() + self.Y) & 0xFF
+
+    def addr_absolute(self):
+        return self.fetch_word()
+
+    def addr_absolute_x(self):
+        return (self.fetch_word() + self.X) & 0xFFFF
+
+    def addr_absolute_y(self):
+        return (self.fetch_word() + self.Y) & 0xFFFF
+
+    def addr_indirect_x(self):
+        zp = (self.fetch_byte() + self.X) & 0xFF
+        low = self.memory[zp]
+        high = self.memory[(zp + 1) & 0xFF]
+        return (high << 8) | low
+
+    def addr_indirect_y(self):
+        zp = self.fetch_byte()
+        low = self.memory[zp]
+        high = self.memory[(zp + 1) & 0xFF]
+        return ((high << 8) | low) + self.Y & 0xFFFF
+
+    def addr_jmp_indirect(self):
+        ptr = self.fetch_word()
+        low = self.memory[ptr]
+        if (ptr & 0x00FF) == 0x00FF:
+            high = self.memory[ptr & 0xFF00]
+        else:
+            high = self.memory[ptr + 1]
+        return (high << 8) | low
         
     def step(self):
         opcode = self.memory[self.PC]
