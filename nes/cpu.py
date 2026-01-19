@@ -595,10 +595,10 @@ class CPU:
             offset = self.memory[self.PC]
             self.PC += 1
 
-           if self.P & 0b01000000:  # V == 1
-               if offset & 0x80:
-                   offset -= 0x100
-               self.PC += offset
+            if self.P & 0b01000000:  # V == 1
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
 
         elif opcode == 0x50:  # BVC
             offset = self.memory[self.PC]
