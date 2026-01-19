@@ -98,9 +98,6 @@ class CPU:
         self.memory[addr] = value
         self.update_zn(value)
 
-        self.set_flag_Z(value)
-        self.set_flag_N(value)
-
     def fetch_byte(self):
         value = self.memory[self.PC]
         self.PC = (self.PC + 1) & 0xFFFF
