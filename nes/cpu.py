@@ -424,6 +424,17 @@ class CPU:
 
             self.A = (self.A << 1) & 0xFF
             self.update_zn(self.A)
+
+        elif opcode == 0x4A:  # LSR A
+            carry = self.A & 1
+
+            if carry:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            self.A = (self.A >> 1) & 0xFF
+            self.update_zn(self.A)    
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
