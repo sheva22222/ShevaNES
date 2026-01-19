@@ -495,6 +495,15 @@ class CPU:
         elif opcode == 0xFE:  # INC absolute,X
             addr = (self.fetch_word() + self.X) & 0xFFFF
             self.INC(addr)
+
+        elif opcode == 0xC6:  # DEC zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            value = (self.memory[addr] - 1) & 0xFF
+            self.memory[addr] = value
+
+            self.update_zn(value)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
