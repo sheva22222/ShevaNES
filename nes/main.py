@@ -1,9 +1,10 @@
 from cpu import CPU
 
 cpu = CPU()
-cpu.A = 0b00000001
+cpu.A = 0b10000000
+cpu.P |= 1  # C = 1
 
-cpu.memory[0x8000] = 0x4A
+cpu.memory[0x8000] = 0x2A
 cpu.memory[0x8001] = 0x00
 cpu.PC = 0x8000
 
@@ -15,5 +16,3 @@ except StopIteration:
 
 print("A =", bin(cpu.A))
 print("C =", cpu.P & 1)
-print("Z =", (cpu.P >> 1) & 1)
-print("N =", (cpu.P >> 7) & 1)
