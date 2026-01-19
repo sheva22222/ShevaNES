@@ -413,6 +413,17 @@ class CPU:
             self.PC += 1
             self.A ^= value
             self.update_zn(self.A)
+
+        elif opcode == 0x0A:  # ASL A
+            carry = (self.A >> 7) & 1
+
+            if carry:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            self.A = (self.A << 1) & 0xFF
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
