@@ -163,6 +163,7 @@ class CPU:
             low = self.memory[0xFFFE]
             high = self.memory[0xFFFF]
             self.PC = (high << 8) | low
+
             raise StopIteration("BRK")
 
         elif opcode == 0xA2:  # LDX immediate
