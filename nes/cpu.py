@@ -590,6 +590,24 @@ class CPU:
             self.memory[addr] = value
 
             self.update_zn(value)
+
+        elif opcode == 0x70:  # BVS
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+           if self.P & 0b01000000:  # V == 1
+               if offset & 0x80:
+                   offset -= 0x100
+               self.PC += offset
+
+        elif opcode == 0x50:  # BVC
+            offset = self.memory[self.PC]
+            self.PC += 1
+
+            if not (self.P & 0b01000000):  # V == 0
+                if offset & 0x80:
+                    offset -= 0x100
+                self.PC += offset
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
