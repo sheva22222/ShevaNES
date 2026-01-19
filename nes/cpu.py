@@ -629,6 +629,12 @@ class CPU:
             0x33, 0x37, 0x3B, 0x3F
         ):
             pass
+
+        elif opcode == 0xF8:  # SED
+            self.P |= 0b00001000  # D = 1
+
+        elif opcode == 0xD8:  # CLD
+            self.P &= ~0b00001000
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
