@@ -91,6 +91,13 @@ class CPU:
         low = self.memory[0xFFFA]
         high = self.memory[0xFFFB]
         self.PC = (high << 8) | low
+
+    def INC(self, addr):
+       value = (self.read(addr) + 1) & 0xFF
+       self.write(addr, value)
+
+       self.set_flag_Z(value)
+       self.set_flag_N(value)
         
     def step(self):
         opcode = self.memory[self.PC]
@@ -459,6 +466,22 @@ class CPU:
 
             self.A = (self.A >> 1) | (old_c << 7)
             self.update_zn(self.A)
+
+        elif opcode == 0xE6:  # INC zeropage
+            addr = self.fetch_byte()
+            self.INC(addr)
+
+        elif opcode == 0xF6:  # INC zeropage,X
+            addr = (self.fetch_byte() + self.X) & 0xFF
+            self.INC(addr)
+
+        elif opcode == 0xEE:  # INC absolute
+            addr = self.fetch_word()
+            self.INC(addr)
+
+        elif opcode == 0xFE:  # INC absolute,X
+            addr = (self.fetch_word() + self.X) & 0xFFFF
+            self.INC(addr)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
