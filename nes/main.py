@@ -2,10 +2,10 @@ from cpu import CPU
 
 cpu = CPU()
 
-cpu.A = 0b00001111
+cpu.A = 0b10000001
 
 cpu.memory[0x8000] = 0x29  # AND #imm
-cpu.memory[0x8001] = 0b11110000
+cpu.memory[0x8001] = 0b11111111
 cpu.memory[0x8002] = 0x00  # BRK
 
 cpu.PC = 0x8000
