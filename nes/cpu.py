@@ -607,6 +607,15 @@ class CPU:
                 if offset & 0x80:
                     offset -= 0x100
                 self.PC += offset
+
+        elif opcode == 0x2D:  # AND absolute
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            self.PC += 2
+
+            addr = (high << 8) | low
+            self.A = self.A & self.memory[addr]
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
