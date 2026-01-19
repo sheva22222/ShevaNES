@@ -467,23 +467,30 @@ class CPU:
             self.A = (self.A >> 1) | (old_c << 7)
             self.update_zn(self.A)
 
-        elif opcode == 0xE6:  # INC zp
-            addr = self.read(self.PC)
+        elif opcode == 0xE6:  # INC zeropage
+            addr = self.memory[self.PC]
             self.PC += 1
 
-            value = (self.read(addr) + 1) & 0xFF
-            self.write(addr, value)
+            value = (self.memory[addr] + 1) & 0xFF
+            self.memory[addr] = value
 
-            self.set_Z(value)
-            self.set_N(value)
+            self.update_zn(value)
 
         elif opcode == 0xF6:  # INC zeropage,X
             addr = (self.fetch_byte() + self.X) & 0xFF
             self.INC(addr)
 
         elif opcode == 0xEE:  # INC absolute
-            addr = self.fetch_word()
-            self.INC(addr)
+            low = self.memory[self.PC]
+            high = self.memory[self.PC + 1]
+            self.PC += 2
+
+            addr = (high << 8) | low
+
+            value = (self.memory[addr] + 1) & 0xFF
+            self.memory[addr] = value
+
+            self.update_zn(value)
 
         elif opcode == 0xFE:  # INC absolute,X
             addr = (self.fetch_word() + self.X) & 0xFFFF
