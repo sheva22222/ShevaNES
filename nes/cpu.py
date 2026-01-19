@@ -401,6 +401,18 @@ class CPU:
 
             self.A = self.A & self.memory[addr]
             self.update_zn(self.A)
+
+        elif opcode == 0x09:  # ORA immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.A |= value
+            self.update_zn(self.A)
+
+        elif opcode == 0x49:  # EOR immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.A ^= value
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
