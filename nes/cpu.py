@@ -749,6 +749,24 @@ class CPU:
 
             self.A = result8
             self.update_zn(self.A)
+
+        elif opcode == 0x47:  # SRE zeropage (illegal)
+            addr = self.fetch_byte()
+            value = self.memory[addr]
+
+            # LSR
+            carry = value & 1
+            value = (value >> 1) & 0xFF
+            self.memory[addr] = value
+
+            if carry:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            # EOR
+            self.A ^= value
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
