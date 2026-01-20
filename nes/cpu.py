@@ -157,6 +157,12 @@ class CPU:
             self.P |= 0b10000000
         else:
             self.P &= ~0b10000000
+
+    def compare(self, reg, value):
+        result = (reg - value) & 0xFF
+        self.set_flag_C(reg >= value)
+        self.set_flag_Z(result == 0)
+        self.set_flag_N(result & 0x80)
         
     def step(self):
         opcode = self.memory[self.PC]
