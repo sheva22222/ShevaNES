@@ -720,6 +720,11 @@ class CPU:
             value = self.memory[addr]
             self.A &= value
             self.update_zn(self.A)
+
+        elif opcode == 0x84:  # STY zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.memory[addr] = self.Y
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
