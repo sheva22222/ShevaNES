@@ -652,6 +652,30 @@ class CPU:
             self.PC += 1
             self.Y = value
             self.set_ZN(self.Y)
+
+        elif opcode == 0xC0:  # CPY #imm
+            value = self.memory[self.PC]
+            self.PC += 1
+
+            result = (self.Y - value) & 0xFF
+
+            # Carry
+            if self.Y >= value:
+                self.P |= 0b00000001
+            else:
+                self.P &= ~0b00000001
+
+            # Zero
+            if result == 0:
+                self.P |= 0b00000010
+            else:
+                self.P &= ~0b00000010
+
+            # Negative
+            if result & 0x80:
+                self.P |= 0b10000000
+            else:
+                self.P &= ~0b10000000
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
