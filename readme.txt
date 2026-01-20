@@ -78,3 +78,13 @@ Creating emulator using vibecoding (experimental, dont use never it)
 39:STX для nestest.nes✅
 
 40:BVS/BVC для nestest.nes✅
+
+41:Эмуляция AND 2/2✅
+
+42:Эмуляция SED/CLD✅
+
+43:Эмуляция CPY✅
+
+44: Эмуляция AND 3/3✅
+
+45:Эмуляция SBC 2/2✅
