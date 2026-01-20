@@ -725,6 +725,30 @@ class CPU:
             addr = self.memory[self.PC]
             self.PC += 1
             self.memory[addr] = self.Y
+
+        elif opcode == 0xF9:  # SBC absolute,Y
+            addr = (self.fetch_word() + self.Y) & 0xFFFF
+            value = self.memory[addr]
+
+            carry = self.P & 1
+            result = self.A - value - (1 - carry)
+
+            # C (no borrow)
+            if result >= 0:
+                self.P |= 0b00000001
+            else:
+                self.P &= 0b11111110
+
+            result8 = result & 0xFF
+
+            # V
+            if ((self.A ^ result8) & (self.A ^ value) & 0x80):
+                self.P |= 0b01000000
+            else:
+                self.P &= 0b10111111
+
+            self.A = result8
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
