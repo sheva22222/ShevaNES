@@ -676,6 +676,30 @@ class CPU:
                 self.P |= 0b10000000
             else:
                 self.P &= ~0b10000000
+
+        elif opcode == 0xE0:  # CPX #imm
+            value = self.memory[self.PC]
+            self.PC += 1
+
+            result = (self.X - value) & 0xFF
+
+            # Carry
+            if self.X >= value:
+                self.P |= 0b00000001
+            else:
+                self.P &= ~0b00000001
+
+            # Zero
+            if result == 0:
+                self.P |= 0b00000010
+            else:
+                self.P &= ~0b00000010
+
+            # Negative
+            if result & 0x80:
+                self.P |= 0b10000000
+            else:
+                self.P &= ~0b10000000
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
