@@ -706,6 +706,19 @@ class CPU:
                 self.P |= 0b10000000
             else:
                 self.P &= ~0b10000000
+
+        elif opcode == 0x31:  # AND (zp),Y
+            zp = self.memory[self.PC]
+            self.PC += 1
+
+            low = self.memory[zp]
+            high = self.memory[(zp + 1) & 0xFF]
+            addr = ((high << 8) | low) + self.Y
+            addr &= 0xFFFF
+
+            value = self.memory[addr]
+            self.A &= value
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
