@@ -133,7 +133,8 @@ class CPU:
         return (high << 8) | low
 
     def addr_indirect_y(self):
-        zp = self.fetch_byte()
+        zp = self.memory[self.PC]
+        self.PC += 1
         low = self.memory[zp]
         high = self.memory[(zp + 1) & 0xFF]
         return ((high << 8) | low) + self.Y & 0xFFFF
