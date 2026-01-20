@@ -149,7 +149,7 @@ class CPU:
         return (high << 8) | low
 
     def set_ZN(self, v):
-    self.P = (self.P & ~0b10000010) | \
+        self.P = (self.P & ~0b10000010) | \
              (0b10 if v == 0 else 0) | \
              (0b10000000 if v & 0x80 else 0)
 
