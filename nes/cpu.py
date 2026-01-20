@@ -148,16 +148,10 @@ class CPU:
             high = self.memory[ptr + 1]
         return (high << 8) | low
 
-    def set_ZN(self, value):
-        if value == 0:
-            self.P |= 0b00000010
-        else:
-            self.P &= ~0b00000010
-
-        if value & 0x80:
-            self.P |= 0b10000000
-        else:
-            self.P &= ~0b10000000
+    def set_ZN(self, v):
+    self.P = (self.P & ~0b10000010) | \
+             (0b10 if v == 0 else 0) | \
+             (0b10000000 if v & 0x80 else 0)
 
     def compare(self, reg, value):
         result = (reg - value) & 0xFF
@@ -166,11 +160,11 @@ class CPU:
         self.set_flag_N(result & 0x80)
         
     def step(self):
-        opcode = self.memory[self.PC]
-        self.PC += 1
+        opcode = self.fetch_byte()
+        print(f"PC={self.PC-1:04X} OP={opcode:02X}")
 
         if opcode == 0xA9:  # LDA immediate
-            value = self.memory[self.PC]
+            value = self.fetch_byte()
             self.PC += 1
             self.A = value
             self.update_zn(self.A)
@@ -218,7 +212,7 @@ class CPU:
 
         elif opcode == 0x00:  # BRK нилагична так дилать попати
 
-            self.PC += 1
+            self.PC += 1  # skip padding byte
 
             # push PC high
             self.memory[0x0100 + self.SP] = (self.PC >> 8) & 0xFF
@@ -296,7 +290,9 @@ class CPU:
             low = self.memory[self.PC]
             high = self.memory[self.PC + 1]
 
-            return_addr = self.PC - 1  # КРИТИЧНО
+            low = self.fetch_byte()
+            high = self.fetch_byte()
+            return_addr = self.PC - 1
 
             # push high
             self.memory[0x0100 + self.SP] = (return_addr >> 8) & 0xFF
