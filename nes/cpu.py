@@ -2,12 +2,12 @@ class CPU:
     def __init__(self):
         self.Y = 0
         self.I = 0
-        self.P = 0b00100100  # флаг U всегда = 1улвллчьв
+        self.P = 0b00100100  # флаг U всегда = 1
         self.A = 0
         self.X = 0
         self.SP = 0xFD
 
-        self.memory = [0] * 65536  # ← ВОТ ЭТО обязателвлшчлвььно 
+        self.memory = [0] * 65536  # ← ВОТ ЭТО абязательно 
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
