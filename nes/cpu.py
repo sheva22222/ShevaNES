@@ -330,9 +330,9 @@ class CPU:
 
         elif opcode == 0xC9:  # CMP immediate
             value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
+            result = (self.A - value) & 0xFF
 
+            # Carry
             if self.A >= value:
                 self.P |= 0b00000001
             else:
