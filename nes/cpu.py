@@ -826,6 +826,27 @@ class CPU:
 
             self.A = self.memory[addr]
             self.set_ZN(self.A)
+
+        elif opcode == 0xA1:  # LDA (zp,X)
+            zp = self.fetch_byte()
+
+            ptr = (zp + self.X) & 0xFF
+            lo = self.memory[ptr]
+            hi = self.memory[(ptr + 1) & 0xFF]
+            addr = lo | (hi << 8)
+
+            self.A = self.memory[addr]
+            self.set_ZN(self.A)
+
+        elif opcode == 0xB1:  # LDA (zp),Y
+            zp = self.fetch_byte()
+
+            lo = self.memory[zp]
+            hi = self.memory[(zp + 1) & 0xFF]
+            addr = ((lo | (hi << 8)) + self.Y) & 0xFFFF
+
+            self.A = self.memory[addr]
+            self.set_ZN(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
