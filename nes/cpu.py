@@ -752,6 +752,14 @@ class CPU:
             # EOR
             self.A ^= value
             self.update_zn(self.A)
+
+        elif opcode == 0x28:  # PLP
+            self.SP = (self.SP + 1) & 0xFF
+            self.P = self.memory[0x0100 + self.SP]
+
+            # B = 0, U = 1
+            self.P &= 0b11101111
+            self.P |= 0b00100000
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
