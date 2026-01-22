@@ -167,7 +167,6 @@ class CPU:
 
         if opcode == 0xA9:  # LDA immediate
             value = self.fetch_byte()
-            self.PC += 1
             self.A = value
             self.update_zn(self.A)
 
