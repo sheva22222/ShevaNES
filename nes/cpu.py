@@ -786,11 +786,18 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0xBA:  # TSX
-            self.X = self.SP
-            self.update_zn(self.X)
-
+            self.X = self.SP & 0xFF
+            self.set_zn(self.X)
+    
         elif opcode == 0x9A:  # TXS
             self.SP = self.X
+
+        elif opcode == 0x8E:  # STX absolute
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            addr = (hi << 8) | lo
+            self.PC += 2
+            self.memory[addr] = self.X
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
