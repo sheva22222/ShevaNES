@@ -158,6 +158,9 @@ class CPU:
         self.set_flag_C(reg >= value)
         self.set_flag_Z(result == 0)
         self.set_flag_N(result & 0x80)
+
+    def set_zn(self, value):
+        self.set_ZN(value)
         
     def step(self):
         pc_before = self.PC
