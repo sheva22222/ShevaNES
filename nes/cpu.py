@@ -175,27 +175,23 @@ class CPU:
             self.update_zn(self.X)
 
         elif opcode == 0x85:  # STA zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
             self.memory[addr] = self.A
 
         elif opcode == 0x86:  # STX zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
             self.memory[addr] = self.X
 
         elif opcode == 0xF0:  # BEQ
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
-            if (self.P >> 1) & 1:  # Z flag
+            if self.P & 0b00000010:  # Z == 1
                 if offset & 0x80:
                     offset -= 0x100
-                self.PC += offset
-
+                self.PC = (self.PC + offset) & 0xFFFF
+        
         elif opcode == 0xD0:  # BNE
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if ((self.P >> 1) & 1) == 0:  # Z == 0
                 if offset & 0x80:
@@ -203,17 +199,15 @@ class CPU:
                 self.PC += offset
 
         elif opcode == 0xB0:  # BCS
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if self.P & 1:  # C == 1
                 if offset & 0x80:
                     offset -= 0x100
                 self.PC += offset
 
-        elif opcode == 0x00:  # BRK нилагична так дилать попати
-
-            self.PC += 1  # skip padding byte
+        elif opcode == 0x00:  # BRK какаха пипити
+            self.PC = (self.PC + 1) & 0xFFFF
 
             # push PC high
             self.memory[0x0100 + self.SP] = (self.PC >> 8) & 0xFF
@@ -223,13 +217,12 @@ class CPU:
             self.memory[0x0100 + self.SP] = self.PC & 0xFF
             self.SP = (self.SP - 1) & 0xFF
 
-            # push P (B=1, U=1)
-            p = self.P | 0b00010000  # B = 1
-            p |= 0b00100000          # U = 1
+            # push P with B=1, U=1
+            p = self.P | 0b00010000 | 0b00100000
             self.memory[0x0100 + self.SP] = p
             self.SP = (self.SP - 1) & 0xFF
 
-            # I = 1
+            # set I
             self.P |= 0b00000100
 
             # load IRQ/BRK vector
@@ -239,9 +232,10 @@ class CPU:
 
             raise StopIteration("BRK")
 
-        elif opcode == 0xA2:  # LDX immediate
-            self.X = self.memory[self.PC]
-            self.PC += 1
+        elif opcode == 0xA2:  # LDX #imm
+            value = self.fetch_byte()
+            self.X = value
+            self.update_zn(self.X)
 
         elif opcode == 0xCA:  # DEX
             self.X = (self.X - 1) & 0xFF
@@ -255,8 +249,9 @@ class CPU:
             self.PC += 2
 
         elif opcode == 0x69:  # ADC immediate
-            value = self.memory[self.PC]
-            self.PC += 1
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             carry = self.P & 1
             result = self.A + value + carry
@@ -334,10 +329,9 @@ class CPU:
             self.PC = ((high << 8) | low) + 1
 
         elif opcode == 0xC9:  # CMP immediate
-            value = self.memory[self.PC]
-            self.PC += 1
-
-            result = (self.A - value) & 0xFF
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             if self.A >= value:
                 self.P |= 0b00000001
@@ -347,8 +341,7 @@ class CPU:
             self.update_zn(result)
 
         elif opcode == 0x90:  # BCC
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if not (self.P & 1):  # C == 0
                 if offset & 0x80:
@@ -356,8 +349,7 @@ class CPU:
                 self.PC += offset
 
         elif opcode == 0x30:  # BMI
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if self.P & 0b10000000:  # N == 1
                 if offset & 0x80:
@@ -365,8 +357,7 @@ class CPU:
                 self.PC += offset
 
         elif opcode == 0x10:  # BPL
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if not (self.P & 0b10000000):  # N == 0
                 if offset & 0x80:
@@ -415,8 +406,9 @@ class CPU:
             self.SP = (self.SP - 1) & 0xFF
 
         elif opcode == 0xE9:  # SBC immediate
-            value = self.memory[self.PC]
-            self.PC += 1
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             carry = self.P & 1
             result = self.A - value - (1 - carry)
@@ -439,8 +431,8 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0x24:  # BIT zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
+            self.memory[addr] = self.A
 
             value = self.memory[addr]
             result = self.A & value
@@ -464,15 +456,16 @@ class CPU:
                 self.P &= 0b10111111
 
         elif opcode == 0x29:  # AND immediate
-            value = self.memory[self.PC]
-            self.PC += 1
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             self.A = self.A & value
             self.update_zn(self.A)
 
         elif opcode == 0x25:  # AND zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
+            self.memory[addr] = self.A
 
             self.A = self.A & self.memory[addr]
             self.update_zn(self.A)
@@ -484,9 +477,8 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0x49:  # EOR immediate
-            value = self.memory[self.PC]
-            self.PC += 1
-            self.A ^= value
+            value = self.fetch_byte()
+            self.A = value
             self.update_zn(self.A)
 
         elif opcode == 0x0A:  # ASL A
@@ -536,8 +528,8 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0xE6:  # INC zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
+            self.memory[addr] = self.A
 
             value = (self.memory[addr] + 1) & 0xFF
             self.memory[addr] = value
@@ -565,8 +557,8 @@ class CPU:
             self.INC(addr)
 
         elif opcode == 0xC6:  # DEC zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
+            addr = self.fetch_byte()
+            self.memory[addr] = self.A
 
             value = (self.memory[addr] - 1) & 0xFF
             self.memory[addr] = value
@@ -574,8 +566,8 @@ class CPU:
             self.update_zn(value)
 
         elif opcode == 0xD6:  # DEC zeropage,X
-            addr = (self.memory[self.PC] + self.X) & 0xFF
-            self.PC += 1
+            addr = self.fetch_byte()
+            self.memory[addr] = self.A
 
             value = (self.memory[addr] - 1) & 0xFF
             self.memory[addr] = value
@@ -606,8 +598,7 @@ class CPU:
             self.update_zn(value)
 
         elif opcode == 0x70:  # BVS
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if self.P & 0b01000000:  # V == 1
                 if offset & 0x80:
@@ -615,8 +606,7 @@ class CPU:
                 self.PC += offset
 
         elif opcode == 0x50:  # BVC
-            offset = self.memory[self.PC]
-            self.PC += 1
+            offset = self.fetch_byte()
 
             if not (self.P & 0b01000000):  # V == 0
                 if offset & 0x80:
@@ -652,14 +642,14 @@ class CPU:
             self.P &= ~0b00001000
 
         elif opcode == 0xA0:  # LDY #imm
-            value = self.memory[self.PC]
-            self.PC += 1
-            self.Y = value
-            self.set_ZN(self.Y)
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
         elif opcode == 0xC0:  # CPY #imm
-            value = self.memory[self.PC]
-            self.PC += 1
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             result = (self.Y - value) & 0xFF
 
@@ -682,8 +672,9 @@ class CPU:
                 self.P &= ~0b10000000
 
         elif opcode == 0xE0:  # CPX #imm
-            value = self.memory[self.PC]
-            self.PC += 1
+            value = self.fetch_byte()
+            self.A = value
+            self.update_zn(self.A)
 
             result = (self.X - value) & 0xFF
 
@@ -706,22 +697,19 @@ class CPU:
                 self.P &= ~0b10000000
 
         elif opcode == 0x31:  # AND (zp),Y
-            zp = self.memory[self.PC]
-            self.PC += 1
+            zp = self.fetch_byte()
 
             low = self.memory[zp]
             high = self.memory[(zp + 1) & 0xFF]
             addr = ((high << 8) | low) + self.Y
             addr &= 0xFFFF
 
-            value = self.memory[addr]
-            self.A &= value
+            self.A &= self.memory[addr]
             self.update_zn(self.A)
 
         elif opcode == 0x84:  # STY zeropage
-            addr = self.memory[self.PC]
-            self.PC += 1
-            self.memory[addr] = self.Y
+            addr = self.fetch_byte()
+            self.memory[addr] = self.AY
 
         elif opcode == 0xF9:  # SBC absolute,Y
             addr = (self.fetch_word() + self.Y) & 0xFFFF
