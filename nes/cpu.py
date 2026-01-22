@@ -772,6 +772,18 @@ class CPU:
         elif opcode == 0xA8:  # TAY
             self.Y = self.A
             self.update_zn(self.Y)
+
+        elif opcode == 0xAA:  # TAX
+            self.X = self.A
+            self.update_zn(self.X)
+
+        elif opcode == 0x8A:  # TXA
+            self.A = self.X
+            self.update_zn(self.A)
+
+        elif opcode == 0x98:  # TYA
+            self.A = self.Y
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
