@@ -760,6 +760,10 @@ class CPU:
             # B = 0, U = 1
             self.P &= 0b11101111
             self.P |= 0b00100000
+
+        elif opcode == 0xC8:  # INY
+            self.Y = (self.Y + 1) & 0xFF
+            self.update_zn(self.Y)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
