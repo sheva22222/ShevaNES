@@ -789,8 +789,8 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0xBA:  # TSX
-            self.X = self.SP & 0xFF
-            self.set_zn(self.X)
+            self.X = self.SP
+            self.set_ZN(self.X)
     
         elif opcode == 0x9A:  # TXS
             self.SP = self.X
