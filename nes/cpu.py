@@ -708,8 +708,9 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0x84:  # STY zeropage
-            addr = self.fetch_byte()
-            self.memory[addr] = self.AY
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.memory[addr] = self.Y
 
         elif opcode == 0xF9:  # SBC absolute,Y
             addr = (self.fetch_word() + self.Y) & 0xFFFF
