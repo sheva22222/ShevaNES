@@ -768,6 +768,10 @@ class CPU:
         elif opcode == 0x88:  # DEY
             self.Y = (self.Y - 1) & 0xFF
             self.update_zn(self.Y)
+
+        elif opcode == 0xA8:  # TAY
+            self.Y = self.A
+            self.update_zn(self.Y)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
