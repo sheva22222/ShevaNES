@@ -7,7 +7,7 @@ class CPU:
         self.X = 0
         self.SP = 0xFD
 
-        self.memory = [0] * 65536  # ← ВОТ ЭТО абязательно
+        self.memory = [0] * 65536  # ← ВОТ ЭТО абязательнjdjdjdjsjjsо
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
