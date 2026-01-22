@@ -801,6 +801,15 @@ class CPU:
             addr = (hi << 8) | lo
             self.PC += 2
             self.memory[addr] = self.X
+
+        elif opcode == 0xAE:  # LDX absolute
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+
+            addr = lo | (hi << 8)
+            self.X = self.memory[addr]
+            self.set_ZN(self.X)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
