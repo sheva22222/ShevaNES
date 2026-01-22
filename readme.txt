@@ -88,3 +88,23 @@ Creating emulator using vibecoding (experimental, dont use never it)
 44: Эмуляция AND 3/3✅
 
 45:Эмуляция SBC 2/2✅
+
+46:Эмуляция SRE✅
+
+47:Эмуляция INY✅
+
+48:Эмуляция DEY✅
+
+49:Эмуляция TYA✅
+
+50:Эмуляция TAX✅
+
+51:Эмуляция TAY✅
+
+52:Эмуляция YXA✅
+
+53:Эмуляция TSX✅
+
+54:Эмуляция TXS✅
+
+55:Эмуляция STA 2/2✅
