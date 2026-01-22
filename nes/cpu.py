@@ -160,8 +160,10 @@ class CPU:
         self.set_flag_N(result & 0x80)
         
     def step(self):
+        pc_before = self.PC
         opcode = self.fetch_byte()
-        print(f"PC={self.PC-1:04X} OP={opcode:02X}")
+
+        print(f"PC={pc_before:04X} OP={opcode:02X}")
 
         if opcode == 0xA9:  # LDA immediate
             value = self.fetch_byte()
