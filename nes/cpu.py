@@ -161,7 +161,14 @@ class CPU:
 
     def set_zn(self, value):
         self.set_ZN(value)
-        
+
+    def addr_zp_x_indirect(self):
+        zp = self.memory[self.PC]
+        self.PC += 1
+        lo = self.memory[(zp + self.X) & 0xFF]
+        hi = self.memory[(zp + self.X + 1) & 0xFF]
+        return lo | (hi << 8)
+    
     def step(self):
         pc_before = self.PC
         opcode = self.fetch_byte()
