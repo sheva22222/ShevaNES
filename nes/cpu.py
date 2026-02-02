@@ -897,6 +897,34 @@ class CPU:
 
             self.A ^= self.memory[addr]
             self.update_zn(self.A)
+
+        elif opcode == 0x61:  # ADC (zp,X)
+            zp = self.memory[self.PC]
+            self.PC += 1
+
+            addr_lo = self.memory[(zp + self.X) & 0xFF]
+            addr_hi = self.memory[(zp + self.X + 1) & 0xFF]
+            addr = addr_lo | (addr_hi << 8)
+
+            value = self.memory[addr]
+            carry = self.P & 1
+
+            result = self.A + value + carry
+
+            # Carry
+            if result > 0xFF:
+                self.P |= 0x01
+            else:
+                self.P &= ~0x01
+
+            # Overflow
+            if (~(self.A ^ value) & (self.A ^ result)) & 0x80:
+                self.P |= 0x40
+            else:
+                self.P &= ~0x40
+
+            self.A = result & 0xFF
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
