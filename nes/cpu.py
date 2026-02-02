@@ -828,15 +828,15 @@ class CPU:
             self.set_ZN(self.A)
 
         elif opcode == 0xA1:  # LDA (zp,X)
-            zp = self.fetch_byte()
+            zp = self.memory[self.PC]
+            self.PC += 1
 
-            ptr = (zp + self.X) & 0xFF
-            lo = self.memory[ptr]
-            hi = self.memory[(ptr + 1) & 0xFF]
-            addr = lo | (hi << 8)
+            addr_lo = self.memory[(zp + self.X) & 0xFF]
+            addr_hi = self.memory[(zp + self.X + 1) & 0xFF]
+            addr = addr_lo | (addr_hi << 8)
 
             self.A = self.memory[addr]
-            self.set_ZN(self.A)
+            self.update_zn(self.A)
 
         elif opcode == 0xB1:  # LDA (zp),Y
             zp = self.fetch_byte()
