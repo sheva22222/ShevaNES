@@ -857,6 +857,17 @@ class CPU:
             addr = addr_lo | (addr_hi << 8)
 
             self.memory[addr] = self.A
+
+        elif opcode == 0x01:  # ORA (zp,X)
+            zp = self.memory[self.PC]
+            self.PC += 1
+
+            addr_lo = self.memory[(zp + self.X) & 0xFF]
+            addr_hi = self.memory[(zp + self.X + 1) & 0xFF]
+            addr = addr_lo | (addr_hi << 8)
+
+            self.A |= self.memory[addr]
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
