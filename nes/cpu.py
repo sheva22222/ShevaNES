@@ -168,6 +168,13 @@ class CPU:
         lo = self.memory[(zp + self.X) & 0xFF]
         hi = self.memory[(zp + self.X + 1) & 0xFF]
         return lo | (hi << 8)
+
+    def addr_zp_x(self):
+        zp = self.memory[self.PC]
+        self.PC += 1
+        lo = self.memory[(zp + self.X) & 0xFF]
+        hi = self.memory[(zp + self.X + 1) & 0xFF]
+        return lo | (hi << 8)
     
     def step(self):
         pc_before = self.PC
