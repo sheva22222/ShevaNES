@@ -1024,6 +1024,15 @@ class CPU:
             self.A &= 0xFF
 
             self.update_zn(self.A)
+
+        elif opcode == 0x45:  # EOR zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            self.A ^= self.memory[addr]
+            self.A &= 0xFF
+
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
