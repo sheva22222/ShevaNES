@@ -1059,6 +1059,22 @@ class CPU:
 
             self.A = result
             self.update_zn(self.A)
+
+        elif opcode == 0xC5:  # CMP zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            value = self.memory[addr]
+            result = (self.A - value) & 0xFF
+
+            # Carry: A >= M
+            if self.A >= value:
+                self.P |= 0x01
+            else:
+                self.P &= ~0x01
+
+            # Zero & Negative
+            self.update_zn(result)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
