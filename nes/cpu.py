@@ -1001,6 +1001,13 @@ class CPU:
                 self.P |= 0x80
             else:
                 self.P &= ~0x80
+
+        elif opcode == 0xA4:  # LDY zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            self.Y = self.memory[addr]
+            self.update_zn(self.Y)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
