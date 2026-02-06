@@ -962,6 +962,45 @@ class CPU:
                 self.P |= 0x80
             else:
                 self.P &= ~0x80
+
+        elif opcode == 0xE1:  # SBC (zp,X)
+            zp = self.memory[self.PC]
+            self.PC += 1
+
+            lo = self.memory[(zp + self.X) & 0xFF]
+            hi = self.memory[(zp + self.X + 1) & 0xFF]
+            addr = lo | (hi << 8)
+
+            value = self.memory[addr]
+
+            carry = 1 if (self.P & 0x01) else 0
+            result = self.A - value - (1 - carry)
+
+            # Overflow
+            if ((self.A ^ value) & 0x80) and ((self.A ^ result) & 0x80):
+                self.P |= 0x40
+            else:
+                self.P &= ~0x40
+
+            # Carry (нет заёма)
+            if result >= 0:
+                self.P |= 0x01
+            else:
+                self.P &= ~0x01
+
+            self.A = result & 0xFF
+
+            # Zero
+            if self.A == 0:
+                self.P |= 0x02
+            else:
+                self.P &= ~0x02
+
+            # Negative
+            if self.A & 0x80:
+                self.P |= 0x80
+            else:
+                self.P &= ~0x80
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
