@@ -1015,6 +1015,15 @@ class CPU:
 
             self.X = self.memory[addr]
             self.update_zn(self.X)
+
+        elif opcode == 0x05:  # ORA zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+
+            self.A |= self.memory[addr]
+            self.A &= 0xFF
+
+            self.update_zn(self.A)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
