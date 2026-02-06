@@ -175,6 +175,9 @@ class CPU:
         lo = self.memory[(zp + self.X) & 0xFF]
         hi = self.memory[(zp + self.X + 1) & 0xFF]
         return lo | (hi << 8)
+
+    def sbc(self, value):
+        self.adc(value ^ 0xFF)
     
     def step(self):
         pc_before = self.PC
@@ -1075,6 +1078,58 @@ class CPU:
 
             # Zero & Negative
             self.update_zn(result)
+
+        elif opcode == 0xE9:  # SBC immediate
+            value = self.memory[self.PC]
+            self.PC += 1
+            self.sbc(value)
+
+        elif opcode == 0xE5:  # SBC zeropage
+            addr = self.memory[self.PC]
+            self.PC += 1
+            self.sbc(self.memory[addr])
+
+        elif opcode == 0xF5:  # SBC zeropage,X
+            zp = (self.memory[self.PC] + self.X) & 0xFF
+            self.PC += 1
+            self.sbc(self.memory[zp])
+
+        elif opcode == 0xED:  # SBC absolute
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+            addr = (hi << 8) | lo
+            self.sbc(self.memory[addr])
+
+        elif opcode == 0xFD:  # SBC absolute,X
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+            addr = ((hi << 8) | lo) + self.X
+            self.sbc(self.memory[addr & 0xFFFF])
+
+        elif opcode == 0xF9:  # SBC absolute,Y
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+            addr = ((hi << 8) | lo) + self.Y
+            self.sbc(self.memory[addr & 0xFFFF])
+
+        elif opcode == 0xE1:  # SBC (zp,X)
+            zp = (self.memory[self.PC] + self.X) & 0xFF
+            self.PC += 1
+            lo = self.memory[zp]
+            hi = self.memory[(zp + 1) & 0xFF]
+            addr = (hi << 8) | lo
+            self.sbc(self.memory[addr])
+
+        elif opcode == 0xF1:  # SBC (zp),Y
+            zp = self.memory[self.PC]
+            self.PC += 1
+            lo = self.memory[zp]
+            hi = self.memory[(zp + 1) & 0xFF]
+            addr = ((hi << 8) | lo) + self.Y
+            self.sbc(self.memory[addr & 0xFFFF])
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
