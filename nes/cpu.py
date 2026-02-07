@@ -1050,44 +1050,18 @@ class CPU:
         elif opcode == 0x65:  # ADC zeropage
             addr = self.memory[self.PC]
             self.PC += 1
-
             value = self.memory[addr]
-            carry = self.P & 1
-
-            result = self.A + value + carry
-
-            # Carry
-            if result > 0xFF:
-                self.P |= 0x01
-            else:
-                self.P &= ~0x01
-
-            result &= 0xFF
-
-            # Overflow
-            if (~(self.A ^ value) & (self.A ^ result)) & 0x80:
-                self.P |= 0x40
-            else:
-                self.P &= ~0x40
-
-            self.A = result
-            self.update_zn(self.A)
+            self.adc(value)
 
         elif opcode == 0xC5:  # CMP zeropage
             addr = self.memory[self.PC]
             self.PC += 1
-
             value = self.memory[addr]
             result = (self.A - value) & 0xFF
 
-            # Carry: A >= M
-            if self.A >= value:
-                self.P |= 0x01
-            else:
-                self.P &= ~0x01
-
-            # Zero & Negative
-            self.update_zn(result)
+            self.set_flag('C', self.A >= value)
+            self.set_flag('Z', result == 0)
+            self.set_flag('N', result & 0x80)
 
         elif opcode == 0xE9:  # SBC immediate
             value = self.memory[self.PC]
@@ -1097,7 +1071,8 @@ class CPU:
         elif opcode == 0xE5:  # SBC zeropage
             addr = self.memory[self.PC]
             self.PC += 1
-            self.sbc(self.memory[addr])
+            value = self.memory[addr]
+            self.sbc(value)
 
         elif opcode == 0xF5:  # SBC zeropage,X
             zp = (self.memory[self.PC] + self.X) & 0xFF
