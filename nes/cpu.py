@@ -178,6 +178,16 @@ class CPU:
 
     def sbc(self, value):
         self.adc(value ^ 0xFF)
+
+    def adc(self, value):
+        carry = self.P & 1
+        result = self.A + value + carry
+
+        self.P = (self.P & ~1) | (1 if result > 0xFF else 0)
+        self.P = (self.P & ~2) | (1 if (result & 0xFF) == 0 else 0)
+        self.P = (self.P & ~0x80) | (result & 0x80)
+
+        self.A = result & 0xFF
     
     def step(self):
         pc_before = self.PC
