@@ -1,13 +1,29 @@
 class CPU:
+    FLAG_BITS = {
+        'C': 0,
+        'Z': 1,
+        'I': 2,
+        'D': 3,
+        'B': 4,
+        'V': 6,
+        'N': 7,
+    }
+
     def __init__(self):
-        self.Y = 0
-        self.I = 0
-        self.P = 0b00100100  # флаг U всегда = 1i
         self.A = 0
         self.X = 0
+        self.Y = 0
+        self.P = 0x24
+        self.PC = 0
         self.SP = 0xFD
+        self.memory = [0] * 0x10000
 
-        self.memory = [0] * 65536  # ← ВОТ ЭТО абязательно 
+    def set_flag(self, flag, value):
+        bit = self.FLAG_BITS[flag]
+        if value:
+            self.P |= (1 << bit)
+        else:
+            self.P &= ~(1 << bit) 
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
@@ -188,6 +204,9 @@ class CPU:
         self.P = (self.P & ~0x80) | (result & 0x80)
 
         self.A = result & 0xFF
+
+    def get_flag(self, flag):
+        return (self.P >> FLAG_BITS[flag]) & 1
     
     def step(self):
         pc_before = self.PC
