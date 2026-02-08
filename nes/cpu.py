@@ -208,6 +208,12 @@ class CPU:
 
     def get_flag(self, flag):
         return (self.P >> self.FLAG_BITS[flag]) & 1
+
+    def read(self, addr):
+        return self.memory[addr & 0xFFFF]
+
+    def write(self, addr, value):
+        self.memory[addr & 0xFFFF] = value & 0xFF
     
     def step(self):
         pc_before = self.PC
