@@ -23,7 +23,7 @@ class CPU:
         if value:
             self.P |= (1 << bit)
         else:
-            self.P &= ~(1 << bit) 
+            self.P &= ~(1 << bit)
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
@@ -206,7 +206,7 @@ class CPU:
         self.A = result & 0xFF
 
     def get_flag(self, flag):
-        return (self.P >> FLAG_BITS[flag]) & 1
+        return (self.P >> self.FLAG_BITS[flag]) & 1
     
     def step(self):
         pc_before = self.PC
