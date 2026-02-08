@@ -1073,15 +1073,15 @@ class CPU:
             value = self.memory[addr]
             self.adc(value)
 
-        elif opcode == 0xC5:  # CMP zeropage
-            addr = self.memory[self.PC]
+        elif opcode == 0xC5:  # CMP zp
+            zp = self.memory[self.PC]
             self.PC += 1
-            value = self.memory[addr]
-            result = self.A & value
+            value = self.memory[zp]
 
-            result = reg - value
-            self.set_flag('C', reg >= value)
-            self.set_flag('Z', result == 0)
+            result = self.A - value
+
+            self.set_flag('C', self.A >= value)
+            self.set_flag('Z', (result & 0xFF) == 0)
             self.set_flag('N', result & 0x80)
 
         elif opcode == 0xE9:  # SBC immediate
@@ -1136,6 +1136,28 @@ class CPU:
             hi = self.memory[(zp + 1) & 0xFF]
             addr = ((hi << 8) | lo) + self.Y
             self.sbc(self.memory[addr & 0xFFFF])
+
+        elif opcode == 0xE4:  # CPX zp
+            zp = self.memory[self.PC]
+            self.PC += 1
+            value = self.memory[zp]
+
+            result = self.X - value
+
+            self.set_flag('C', self.X >= value)
+            self.set_flag('Z', (result & 0xFF) == 0)
+            self.set_flag('N', result & 0x80)
+
+        elif opcode == 0xC4:  # CPY zp
+            zp = self.memory[self.PC]
+            self.PC += 1
+            value = self.memory[zp]
+
+            result = self.Y - value
+
+            self.set_flag('C', self.Y >= value)
+            self.set_flag('Z', (result & 0xFF) == 0)
+            self.set_flag('N', result & 0x80)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
