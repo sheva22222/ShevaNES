@@ -1157,6 +1157,18 @@ class CPU:
             self.set_flag('C', self.Y >= value)
             self.set_flag('Z', (result & 0xFF) == 0)
             self.set_flag('N', result & 0x80)
+
+        elif opcode == 0x46:  # LSR zeropage
+            addr = self.fetch_byte()
+            value = self.read(addr)
+
+            self.set_flag('C', value & 0x01)
+
+            value = (value >> 1) & 0xFF
+            self.write(addr, value)
+
+            self.set_flag('Z', value == 0)
+            self.set_flag('N', False)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
