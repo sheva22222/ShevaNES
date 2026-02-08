@@ -232,12 +232,13 @@ class CPU:
             self.memory[addr] = self.X
 
         elif opcode == 0xF0:  # BEQ
-            offset = self.fetch_byte()
+            offset = self.memory[self.PC]
+            self.PC += 1
 
-            if self.P & 0b00000010:  # Z == 1
+            if self.get_flag('Z'):
                 if offset & 0x80:
                     offset -= 0x100
-                self.PC = (self.PC + offset) & 0xFFFF
+                self.PC += offset
         
         elif opcode == 0xD0:  # BNE
             offset = self.fetch_byte()
@@ -1076,9 +1077,10 @@ class CPU:
             addr = self.memory[self.PC]
             self.PC += 1
             value = self.memory[addr]
-            result = (self.A - value) & 0xFF
+            result = self.A & value
 
-            self.set_flag('C', self.A >= value)
+            result = reg - value
+            self.set_flag('C', reg >= value)
             self.set_flag('Z', result == 0)
             self.set_flag('N', result & 0x80)
 
