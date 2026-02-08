@@ -216,9 +216,10 @@ class CPU:
         print(f"PC={pc_before:04X} OP={opcode:02X}")
 
         if opcode == 0xA9:  # LDA #imm
-            value = self.read(self.PC)
-            self.PC += 1
+            value = self.fetch_byte()
             self.A = value
+            self.set_flag('Z', self.A == 0)
+            self.set_flag('N', self.A & 0x80)
             
         elif opcode == 0xE8:  # INX
             self.X = (self.X + 1) & 0xFF
