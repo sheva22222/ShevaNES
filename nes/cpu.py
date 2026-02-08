@@ -486,30 +486,13 @@ class CPU:
             self.A = result8
             self.update_zn(self.A)
 
-        elif opcode == 0x24:  # BIT zeropage
+        elif opcode == 0x24:  # BIT zp
             addr = self.fetch_byte()
-            self.memory[addr] = self.A
+            value = self.read(addr)
 
-            value = self.memory[addr]
-            result = self.A & value
-
-            # Z
-            if result == 0:
-                self.P |= 0b00000010
-            else:
-                self.P &= 0b11111101
-
-            # N (bit 7 of memory)
-            if value & 0x80:
-                self.P |= 0b10000000
-            else:
-                self.P &= 0b01111111
-
-            # V (bit 6 of memory)
-            if value & 0x40:
-                self.P |= 0b01000000
-            else:
-                self.P &= 0b10111111
+            self.set_flag('Z', (self.A & value) == 0)
+            self.set_flag('N', value & 0x80)
+            self.set_flag('V', value & 0x40)
 
         elif opcode == 0x29:  # AND immediate
             value = self.fetch_byte()
@@ -1176,6 +1159,14 @@ class CPU:
 
             self.set_flag('Z', value == 0)
             self.set_flag('N', False)
+
+        elif opcode == 0x2C:  # BIT abs
+            addr = self.fetch_word()
+            value = self.read(addr)
+
+            self.set_flag('Z', (self.A & value) == 0)
+            self.set_flag('N', value & 0x80)
+            self.set_flag('V', value & 0x40)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
