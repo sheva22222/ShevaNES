@@ -176,7 +176,8 @@ class CPU:
         self.set_flag_N(result & 0x80)
 
     def set_zn(self, value):
-        self.set_ZN(value)
+        self.set_flag('Z', value == 0)
+        self.set_flag('N', value & 0x80)
 
     def addr_zp_x_indirect(self):
         zp = self.memory[self.PC]
@@ -214,10 +215,9 @@ class CPU:
 
         print(f"PC={pc_before:04X} OP={opcode:02X}")
 
-        if opcode == 0xA9:  # LDA immediate
-            value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
+        elif opcode == 0xA9:  #lda imm
+            self.A = self.fetch_byte()
+            self.set_zn(self.A)
 
         elif opcode == 0xE8:  # INX
             self.X = (self.X + 1) & 0xFF
@@ -231,14 +231,12 @@ class CPU:
             addr = self.fetch_byte()
             self.memory[addr] = self.X
 
-        elif opcode == 0xF0:  # BEQ
-            offset = self.memory[self.PC]
-            self.PC += 1
-
+        elif opcode == 0xF0:
+            offset = self.fetch_byte()
             if self.get_flag('Z'):
                 if offset & 0x80:
                     offset -= 0x100
-                self.PC += offset
+                self.PC = (self.PC + offset) & 0xFFFF
         
         elif opcode == 0xD0:  # BNE
             offset = self.fetch_byte()
