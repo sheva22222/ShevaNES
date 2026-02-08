@@ -215,7 +215,7 @@ class CPU:
 
         print(f"PC={pc_before:04X} OP={opcode:02X}")
 
-        if opcode == 0xA9:  #lda imm
+        if opcode == 0xA9:
             self.A = self.fetch_byte()
             self.set_zn(self.A)
 
