@@ -357,19 +357,13 @@ class CPU:
             high = self.memory[self.PC + 1]
             self.PC = (high << 8) | low
 
-        elif opcode == 0x6C:  # JMP indirect (with 6502 bug)
-            ptr_low = self.memory[self.PC]
-            ptr_high = self.memory[self.PC + 1]
-            ptr = (ptr_high << 8) | ptr_low
+        elif opcode == 0x6C:  # JMP (indirect)
+            ptr = self.read_word(self.PC)
+            self.PC += 2
 
-            # 6502 page boundary bug
-            low = self.memory[ptr]
-            if (ptr & 0x00FF) == 0x00FF:
-                high = self.memory[ptr & 0xFF00]
-            else:
-                high = self.memory[ptr + 1]
-
-            self.PC = (high << 8) | low
+            lo = self.read(ptr)
+            hi = self.read((ptr & 0xFF00) | ((ptr + 1) & 0xFF))
+            self.PC = (hi << 8) | lo
 
         elif opcode == 0x60:  # RTS
             self.SP = (self.SP + 1) & 0xFF
@@ -416,21 +410,14 @@ class CPU:
                     offset -= 0x100
                 self.PC += offset
 
-        elif opcode == 0x40:  # RTI чат гпт гамно мале поставило после этой строчки комент
-            self.SP = (self.SP + 1) & 0xFF
-            self.P = self.memory[0x0100 + self.SP]
-            self.P &= 0b11101111  # B = 0
-            self.P |= 0b00100000  # U = 1
+        elif opcode == 0x40:  # RTI
+            self.P = self.pull()
+            self.P &= ~0x10      # сброс B
+            self.P |= 0x20       # bit 5 всегда 1
 
-            # pull PC low
-            self.SP = (self.SP + 1) & 0xFF
-            low = self.memory[0x0100 + self.SP]
-
-            # pull PC high
-            self.SP = (self.SP + 1) & 0xFF
-            high = self.memory[0x0100 + self.SP]
-
-            self.PC = (high << 8) | low
+            lo = self.pull()
+            hi = self.pull()
+            self.PC = (hi << 8) | lo
 
         elif opcode == 0xEA:  # NOP
             pass
@@ -483,7 +470,8 @@ class CPU:
             self.update_zn(self.A)
 
         elif opcode == 0x24:  # BIT zp
-            addr = self.fetch_byte()
+            addr = self.read(self.PC)
+            self.PC += 1
             value = self.read(addr)
 
             self.set_flag('Z', (self.A & value) == 0)
