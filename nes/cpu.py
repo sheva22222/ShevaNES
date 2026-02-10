@@ -1087,19 +1087,22 @@ class CPU:
             self.set_flag('Z', (result & 0xFF) == 0)
             self.set_flag('N', result & 0x80)
 
-        elif opcode == 0x46:  # LSR zeropage
-            addr = self.fetch_byte()
-            val = self.read(addr)
+        elif opcode == 0x46:  # LSR zp
+            addr = self.memory[self.PC]
+            self.PC += 1
 
-            # Carry = бит 0 до сдвига
-            self.set_flag('C', val & 0x01)
+            value = self.memory[addr]
 
-            val = (val >> 1) & 0xFF
-            self.write(addr, val)
+            self.set_flag('C', value & 0x01)
 
-            self.set_flag('Z', val == 0)
-            self.set_flag('N', False)  # LSR всегда сбрасывает N
+            value >>= 1
+            value &= 0xFF
 
+            self.memory[addr] = value
+
+            self.set_flag('Z', value == 0)
+            self.set_flag('N', False)   # ← ВАЖНО
+    
         elif opcode == 0x2C:  # BIT abs
             addr = self.fetch_word()
             value = self.read(addr)
@@ -1107,6 +1110,53 @@ class CPU:
             self.set_flag('Z', (self.A & value) == 0)
             self.set_flag('N', value & 0x80)
             self.set_flag('V', value & 0x40)
+
+        elif opcode == 0x56:  # LSR zp,X
+            zp = self.memory[self.PC]
+            self.PC += 1
+
+            addr = (zp + self.X) & 0xFF
+            value = self.memory[addr]
+
+            self.set_flag('C', value & 0x01)
+
+            value = (value >> 1) & 0xFF
+            self.memory[addr] = value
+
+            self.set_flag('Z', value == 0)
+            self.set_flag('N', False)
+
+        elif opcode == 0x4E:  # LSR abs
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+
+            addr = lo | (hi << 8)
+            value = self.memory[addr]
+
+            self.set_flag('C', value & 0x01)
+
+            value = (value >> 1) & 0xFF
+            self.memory[addr] = value
+
+            self.set_flag('Z', value == 0)
+            self.set_flag('N', False)
+
+        elif opcode == 0x5E:  # LSR abs,X
+            lo = self.memory[self.PC]
+            hi = self.memory[self.PC + 1]
+            self.PC += 2
+
+            addr = ((lo | (hi << 8)) + self.X) & 0xFFFF
+            value = self.memory[addr]
+
+            self.set_flag('C', value & 0x01)
+
+            value = (value >> 1) & 0xFF
+            self.memory[addr] = value
+
+            self.set_flag('Z', value == 0)
+            self.set_flag('N', False)
         
         else:
             raise Exception(f"Unknown opcode {hex(opcode)}")
