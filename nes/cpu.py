@@ -1,4 +1,13 @@
 class CPU:
+    C_FLAG = 0x01  # Carry
+    Z_FLAG = 0x02  # Zero
+    I_FLAG = 0x04  # Interrupt Disable
+    D_FLAG = 0x08  # Decimal
+    B_FLAG = 0x10  # Break
+    U_FLAG = 0x20  # Unused
+    V_FLAG = 0x40  # Overflow
+    N_FLAG = 0x80  # Negative
+    
     FLAG_BITS = {
         'C': 0,
         'Z': 1,
@@ -18,12 +27,11 @@ class CPU:
         self.SP = 0xFD
         self.memory = [0] * 0x10000
 
-    def set_flag(self, flag, value):
-        bit = self.FLAG_BITS[flag]
-        if value:
-            self.P |= (1 << bit)
+    def set_flag(self, flag, condition):
+        if condition:
+            self.status |= flag
         else:
-            self.P &= ~(1 << bit)
+            self.status &= ~flag
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
