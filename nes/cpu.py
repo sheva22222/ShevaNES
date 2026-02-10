@@ -221,10 +221,10 @@ class CPU:
 
         print(f"PC={pc_before:04X} OP={opcode:02X}")
 
-        if opcode == 0xA0:  # LDY #imm
+        elif opcode == 0xA9:  # LDA #imm
             value = self.fetch_byte()
-            self.Y = value
-            self.update_zn(self.Y)
+            self.A = value
+            self.update_zn(self.A)
             
         elif opcode == 0xE8:  # INX
             self.X = (self.X + 1) & 0xFF
@@ -674,8 +674,9 @@ class CPU:
             self.P &= ~0b00001000
 
         elif opcode == 0xA0:  # LDY #imm
+            value = self.fetch_byte()
             self.Y = value
-            self.set_ZN(self.Y)
+            self.update_zn(self.Y)
 
         elif opcode == 0xC0:  # CPY #imm
             value = self.fetch_byte()
