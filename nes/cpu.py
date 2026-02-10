@@ -214,6 +214,15 @@ class CPU:
 
     def write(self, addr, value):
         self.memory[addr & 0xFFFF] = value & 0xFF
+
+    def push(self, value):
+        self.memory[0x0100 + self.SP] = value & 0xFF
+        self.SP = (self.SP - 1) & 0xFF
+
+
+    def pull(self):
+        self.SP = (self.SP + 1) & 0xFF
+        return self.memory[0x0100 + self.SP]
     
     def step(self):
         pc_before = self.PC
