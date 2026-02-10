@@ -221,7 +221,7 @@ class CPU:
 
         print(f"PC={pc_before:04X} OP={opcode:02X}")
 
-        elif opcode == 0xA9:  # LDA #imm
+        if opcode == 0xA9:  # LDA #imm
             value = self.fetch_byte()
             self.A = value
             self.update_zn(self.A)
