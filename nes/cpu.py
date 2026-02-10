@@ -463,31 +463,6 @@ class CPU:
             self.memory[0x0100 + self.SP] = p
             self.SP = (self.SP - 1) & 0xFF
 
-        elif opcode == 0xE9:  # SBC immediate
-            value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
-
-            carry = self.P & 1
-            result = self.A - value - (1 - carry)
-
-            # C flag (no borrow)
-            if result >= 0:
-                self.P |= 0b00000001
-            else:
-                self.P &= 0b11111110
-
-            result8 = result & 0xFF
-
-            # V flag
-            if ((self.A ^ result8) & (self.A ^ value) & 0x80):
-                self.P |= 0b01000000
-            else:
-                self.P &= 0b10111111
-
-            self.A = result8
-            self.update_zn(self.A)
-
         elif opcode == 0x24:  # BIT zp
             addr = self.read(self.PC)
             self.PC += 1
@@ -504,9 +479,7 @@ class CPU:
 
         elif opcode == 0x25:  # AND zeropage
             addr = self.fetch_byte()
-            self.memory[addr] = self.A
-
-            self.A = self.A & self.memory[addr]
+            self.A &= self.memory[addr]
             self.update_zn(self.A)
 
         elif opcode == 0x09:  # ORA immediate
@@ -515,9 +488,9 @@ class CPU:
             self.A |= value
             self.update_zn(self.A)
 
-        elif opcode == 0x49:  # EOR immediate
+        elif opcode == 0x49:
             value = self.fetch_byte()
-            self.A = value
+            self.A ^= value
             self.update_zn(self.A)
 
         elif opcode == 0x0A:  # ASL A
@@ -1122,32 +1095,18 @@ class CPU:
             self.set_flag('Z', (result & 0xFF) == 0)
             self.set_flag('N', result & 0x80)
 
-        elif opcode == 0xC4:  # CPY zp
-            zp = self.memory[self.PC]
-            self.PC += 1
-            value = self.memory[zp]
+        elif opcode == 0x46:  # LSR zeropage
+            addr = self.fetch_byte()
+            val = self.read(addr)
 
-            result = self.Y - value
+            # Carry = бит 0 до сдвига
+            self.set_flag('C', val & 0x01)
 
-            self.set_flag('C', self.Y >= value)
-            self.set_flag('Z', (result & 0xFF) == 0)
-            self.set_flag('N', result & 0x80)
+            val = (val >> 1) & 0xFF
+            self.write(addr, val)
 
-        elif opcode == 0x46:  # LSR zp
-            addr = self.read8(self.PC)
-            self.PC += 1
-
-            val = self.read8(addr)
-
-            self.set_flag(self.C_FLAG, val & 0x01)
-
-            val >>= 1
-            val &= 0xFF
-
-            self.write8(addr, val)
-
-            self.set_flag(self.Z_FLAG, val == 0)
-            self.set_flag(self.N_FLAG, False)
+            self.set_flag('Z', val == 0)
+            self.set_flag('N', False)  # LSR всегда сбрасывает N
 
         elif opcode == 0x2C:  # BIT abs
             addr = self.fetch_word()
