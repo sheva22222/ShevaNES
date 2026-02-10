@@ -306,9 +306,6 @@ class CPU:
 
         elif opcode == 0x69:  # ADC immediate
             value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
-
             carry = self.P & 1
             result = self.A + value + carry
 
@@ -496,11 +493,8 @@ class CPU:
 
         elif opcode == 0x29:  # AND immediate
             value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
-
-            self.A = self.A & value
-            self.update_zn(self.A)
+            self.A &= value
+            self.set_ZN(self.A)
 
         elif opcode == 0x25:  # AND zeropage
             addr = self.fetch_byte()
@@ -681,9 +675,8 @@ class CPU:
             self.P &= ~0b00001000
 
         elif opcode == 0xA0:  # LDY #imm
-            value = self.fetch_byte()
-            self.A = value
-            self.update_zn(self.A)
+            self.Y = value
+            self.set_ZN(self.Y)
 
         elif opcode == 0xC0:  # CPY #imm
             value = self.fetch_byte()
@@ -858,8 +851,6 @@ class CPU:
 
         elif opcode == 0xA5:  # LDA zeropage
             addr = self.fetch_byte()
-            self.memory[addr] = self.A
-
             self.A = self.memory[addr]
             self.set_ZN(self.A)
 
