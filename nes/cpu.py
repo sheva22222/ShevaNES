@@ -849,19 +849,11 @@ class CPU:
             self.memory[addr] = self.A
 
         elif opcode == 0x01:  # ORA (zp,X)
-            zp = self.read8(self.PC)
-            self.PC += 1
-
-            ptr = (zp + self.X) & 0xFF
-            lo = self.read8(ptr)
-            hi = self.read8((ptr + 1) & 0xFF)
-            addr = (hi << 8) | lo
-
-            self.A |= self.read8(addr)
+            addr = self.addr_indirect_x()
+            self.A |= self.memory[addr]
             self.A &= 0xFF
-
             self.set_flag('Z', self.A == 0)
-            self.set_flag('N', value & 0x80)
+            self.set_flag('N', self.A & 0x80)
             
         elif opcode == 0x21:  # AND (zp,X)
             zp = self.memory[self.PC]
