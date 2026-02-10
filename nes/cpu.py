@@ -1120,18 +1120,20 @@ class CPU:
             self.set_flag('N', result & 0x80)
 
         elif opcode == 0x46:  # LSR zp
-            addr = self.memory[self.PC]
+            addr = self.read8(self.PC)
             self.PC += 1
 
-            value = self.memory[addr]
+            val = self.read8(addr)
 
-            self.set_flag('C', value & 0x01)
+            self.set_flag(self.C_FLAG, val & 0x01)
 
-            value = (value >> 1) & 0xFF
-            self.memory[addr] = value
+            val >>= 1
+            val &= 0xFF
 
-            self.set_flag('Z', value == 0)
-            self.set_flag('N', False)
+            self.write8(addr, val)
+
+            self.set_flag(self.Z_FLAG, val == 0)
+            self.set_flag(self.N_FLAG, False)
 
         elif opcode == 0x2C:  # BIT abs
             addr = self.fetch_word()
