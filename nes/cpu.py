@@ -18,11 +18,12 @@ class CPU:
         self.SP = 0xFD
         self.memory = [0] * 0x10000
 
-    def set_flag(self, flag, condition):
-        if condition:
-            self.status |= flag
+    def set_flag(self, flag, value):
+        bit = self.FLAG_BITS[flag]
+        if value:
+            self.P |= (1 << bit)
         else:
-            self.status &= ~flag
+            self.P &= ~(1 << bit)
 
     def load_program(self, program, start=0x8000):
         for i, byte in enumerate(program):
