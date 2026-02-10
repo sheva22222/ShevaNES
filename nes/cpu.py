@@ -223,6 +223,12 @@ class CPU:
     def pull(self):
         self.SP = (self.SP + 1) & 0xFF
         return self.memory[0x0100 + self.SP]
+
+    def read8(self, addr):
+        return self.read(addr)
+
+    def write8(self, addr, value):
+        self.write(addr, value)
     
     def step(self):
         pc_before = self.PC
