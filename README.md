@@ -22,7 +22,7 @@ dotnet build
 dotnet publish -f net8.0-android -c Release
 ```
 
-### GitHub Actions
+### GitHub Actbions
 Каждый push автоматически собирает APK и загружает его в Artifacts.
 
 ## Использование
