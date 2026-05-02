@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.Maui.Sdk/8.0.0">
+<Project Sdk="Microsoft.Maui.Sdk/8.0.3">
     <PropertyGroup>
         <TargetFrameworks>net8.0-android</TargetFrameworks>
         <OutputType>Exe</OutputType>
