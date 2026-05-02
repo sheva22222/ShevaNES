@@ -24,13 +24,15 @@ jobs:
         api-level: 33
     
     - name: Install MAUI workload
-      run: |
-        dotnet workload restore
+      run: dotnet workload install maui-android
     
     - name: Restore dependencies
       run: dotnet restore ShevaNES.fsproj
     
     - name: Build Android Release
+      run: dotnet build ShevaNES.fsproj -f net8.0-android -c Release
+    
+    - name: Create APK
       run: |
         dotnet publish ShevaNES.fsproj -f net8.0-android \
           -c Release \
