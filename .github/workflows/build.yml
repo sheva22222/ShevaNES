@@ -11,20 +11,20 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     
     - name: Setup .NET 8
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.0.x'
     
+    - name: Install MAUI workload
+      run: dotnet workload restore
+    
     - name: Install Android SDK
-      uses: android-actions/setup-android@v2
+      uses: android-actions/setup-android@v3
       with:
         api-level: 33
-    
-    - name: Install MAUI workload
-      run: dotnet workload install maui-android
     
     - name: Restore dependencies
       run: dotnet restore
