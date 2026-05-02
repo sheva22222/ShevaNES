@@ -12,6 +12,10 @@
         <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21</SupportedOSPlatformVersion>
+        
+        <!-- Android specific properties for publish -->
+        <AndroidPackageFormat>apk</AndroidPackageFormat>
+        <AndroidKeyStore>false</AndroidKeyStore>
     </PropertyGroup>
     
     <ItemGroup>
