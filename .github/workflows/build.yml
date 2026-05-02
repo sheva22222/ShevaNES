@@ -18,10 +18,10 @@ jobs:
       with:
         dotnet-version: '8.0.x'
     
-    - name: Install Android SDK
+    - name: Accept Android licenses
       uses: android-actions/setup-android@v3
       with:
-        api-level: 33
+        accept-android-sdk-licenses: true
     
     - name: Install MAUI workload
       run: dotnet workload install maui-android
@@ -36,8 +36,13 @@ jobs:
           -p:AndroidKeyStore=false \
           -p:Configuration=Release
     
+    - name: Find APK
+      run: find . -name "ShevaNES*.apk" -type f
+    
     - name: Upload APK Artifact
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: ShevaNES-android
         path: '**/bin/Release/**/ShevaNES*.apk'
+        if-no-files-found: warn
